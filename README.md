@@ -28,13 +28,6 @@ Một ví dụ Python agent sử dụng `langchain`, `groq` và module mock `lan
 
 ## Chạy agent
 
-### Chế độ dòng lệnh (Terminal)
-
-```bash
-python cli.py
-```
-
-Giao diện tương tác trong terminal, dễ sử dụng và không cần trình duyệt.
 
 ### Chế độ Web UI (Streamlit) - Khuyên dùng
 
