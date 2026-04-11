@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Pz5S8qF/IBs=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Dell\\OneDrive\\Desktop\\Doan\\Backend\\src\\DoAn.HotelParking.Core.Application\\DoAn.HotelParking.Core.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Dell\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.5\\microsoft.extensions.dependencyinjection.abstractions.10.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}

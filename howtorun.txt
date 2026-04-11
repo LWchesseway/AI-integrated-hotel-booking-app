@@ -1,0 +1,12 @@
+1.Tạo migration
+dotnet ef migrations add InitialCreate
+2.cập nhật database
+dotnet ef database update
+3.Chạy ứng dụng
+dotnet run
+
+
+Nếu đứng ở thư mục gốc .sln thì chạy lệnh sau để chạy ứng dụng
+dotnet ef migrations add InitialCreate -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
+dotnet ef database update -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
+dotnet run --project Presentation
