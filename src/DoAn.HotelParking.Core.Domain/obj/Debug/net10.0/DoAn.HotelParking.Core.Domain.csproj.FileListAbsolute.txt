@@ -9,3 +9,15 @@ C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Domain\ob
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\refint\DoAn.HotelParking.Core.Domain.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.pdb
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\ref\DoAn.HotelParking.Core.Domain.dll
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\bin\Debug\net10.0\DoAn.HotelParking.Core.Domain.deps.json
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\bin\Debug\net10.0\DoAn.HotelParking.Core.Domain.dll
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\bin\Debug\net10.0\DoAn.HotelParking.Core.Domain.pdb
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.AssemblyInfoInputs.cache
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.AssemblyInfo.cs
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.csproj.CoreCompileInputs.cache
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.sourcelink.json
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.dll
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\refint\DoAn.HotelParking.Core.Domain.dll
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\DoAn.HotelParking.Core.Domain.pdb
+D:\DOAN\AI-integrated-hotel-booking-app\src\DoAn.HotelParking.Core.Domain\obj\Debug\net10.0\ref\DoAn.HotelParking.Core.Domain.dll

@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "H5Dd5JKo5TA=",
+  "dgSpecHash": "4TwFDaqp0NQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dell\\OneDrive\\Desktop\\Doan\\Backend\\src\\DoAn.HotelParking.Core.Domain\\DoAn.HotelParking.Core.Domain.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "D:\\DOAN\\AI-integrated-hotel-booking-app\\src\\DoAn.HotelParking.Core.Domain\\DoAn.HotelParking.Core.Domain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.22\\microsoft.netcore.app.ref.8.0.22.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.22\\microsoft.windowsdesktop.app.ref.8.0.22.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.22\\microsoft.aspnetcore.app.ref.8.0.22.nupkg.sha512"
+  ],
   "logs": []
 }

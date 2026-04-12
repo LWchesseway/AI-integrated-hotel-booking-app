@@ -1,0 +1,1 @@
+global using UserEntity = DoAn.HotelParking.Core.Domain.Entities.Auth.User;
