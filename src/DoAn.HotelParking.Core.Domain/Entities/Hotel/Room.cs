@@ -11,6 +11,7 @@ public class Room
     public int RoomTypeId { get; set; }
     public string? RoomNumber { get; set; }
     public int Capacity { get; set; }
+    public decimal Price { get; set; }
     public RoomStatus Status { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }

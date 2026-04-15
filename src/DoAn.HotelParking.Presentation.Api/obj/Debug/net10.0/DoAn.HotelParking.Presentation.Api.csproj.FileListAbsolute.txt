@@ -8,7 +8,6 @@ C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.A
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\DoAn.HotelParking.Presentation.Api.pdb
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Azure.Core.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Azure.Identity.dll
-C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Microsoft.Data.SqlClient.dll
@@ -162,3 +161,11 @@ C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.A
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\obj\Debug\net10.0\DoAn.HotelParking.Presentation.Api.sourcelink.json
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\AutoMapper.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\BCrypt.Net-Next.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Presentation.Api\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll

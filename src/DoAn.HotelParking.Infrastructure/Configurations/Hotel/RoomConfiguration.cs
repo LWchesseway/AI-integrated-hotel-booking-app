@@ -8,12 +8,16 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
 {
     public void Configure(EntityTypeBuilder<Room> entity)
     {
-        entity.ToTable("Room");
+        entity.ToTable("Room", tb =>
+        {
+            tb.HasCheckConstraint("CK_Room_Price", "[Price] >= 0");
+        });
 
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
         entity.Property(e => e.RoomNumber).HasMaxLength(50);
+        entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
         entity.Property(e => e.Status).HasConversion<byte>();
         entity.Property(e => e.IsDeleted).HasDefaultValue(false);
         entity.Property(e => e.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");

@@ -11,10 +11,31 @@
           "DoAn.HotelParking.Core.Application": "1.0.0",
           "DoAn.HotelParking.Core.Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore.Design": "10.0.5",
-          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.5"
+          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.5",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.5"
         },
         "runtime": {
           "DoAn.HotelParking.Infrastructure.dll": {}
+        }
+      },
+      "AutoMapper/12.0.1": {
+        "runtime": {
+          "lib/netstandard2.1/AutoMapper.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.0"
+          }
+        }
+      },
+      "AutoMapper.Extensions.Microsoft.DependencyInjection/12.0.1": {
+        "dependencies": {
+          "AutoMapper": "12.0.1",
+          "Microsoft.Extensions.Options": "10.0.5"
+        },
+        "runtime": {
+          "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.0"
+          }
         }
       },
       "Azure.Core/1.47.1": {
@@ -40,6 +61,14 @@
           "lib/net8.0/Azure.Identity.dll": {
             "assemblyVersion": "1.14.2.0",
             "fileVersion": "1.1400.225.36004"
+          }
+        }
+      },
+      "BCrypt.Net-Next/4.1.0": {
+        "runtime": {
+          "lib/net10.0/BCrypt.Net-Next.dll": {
+            "assemblyVersion": "4.1.0.0",
+            "fileVersion": "4.1.0.0"
           }
         }
       },
@@ -544,12 +573,36 @@
           }
         }
       },
+      "Microsoft.Extensions.Configuration/10.0.5": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "10.0.5",
+          "Microsoft.Extensions.Primitives": "10.0.5"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.Configuration.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.526.15411"
+          }
+        }
+      },
       "Microsoft.Extensions.Configuration.Abstractions/10.0.5": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "10.0.5"
         },
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.526.15411"
+          }
+        }
+      },
+      "Microsoft.Extensions.Configuration.Binder/10.0.5": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "10.0.5",
+          "Microsoft.Extensions.Configuration.Abstractions": "10.0.5"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.Configuration.Binder.dll": {
             "assemblyVersion": "10.0.0.0",
             "fileVersion": "10.0.526.15411"
           }
@@ -613,6 +666,21 @@
         },
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.Options.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.526.15411"
+          }
+        }
+      },
+      "Microsoft.Extensions.Options.ConfigurationExtensions/10.0.5": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "10.0.5",
+          "Microsoft.Extensions.Configuration.Binder": "10.0.5",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.5",
+          "Microsoft.Extensions.Options": "10.0.5",
+          "Microsoft.Extensions.Primitives": "10.0.5"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll": {
             "assemblyVersion": "10.0.0.0",
             "fileVersion": "10.0.526.15411"
           }
@@ -908,6 +976,9 @@
       },
       "DoAn.HotelParking.Core.Application/1.0.0": {
         "dependencies": {
+          "AutoMapper": "12.0.1",
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
+          "BCrypt.Net-Next": "4.1.0",
           "DoAn.HotelParking.Core.Domain": "1.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.5"
         },
@@ -934,6 +1005,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "AutoMapper/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hvV62vl6Hp/WfQ24yzo3Co9+OPl8wH8hApwVtgWpiAynVJkUcs7xvehnSftawL8Pe8FrPffBRM3hwzLQqWDNjA==",
+      "path": "automapper/12.0.1",
+      "hashPath": "automapper.12.0.1.nupkg.sha512"
+    },
+    "AutoMapper.Extensions.Microsoft.DependencyInjection/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+g/K+Vpe3gGMKGzjslMOdqNlkikScDjWfVvmWTayrDHaG/n2pPmFBMa+jKX1r/h6BDGFdkyRjAuhFE3ykW+r1g==",
+      "path": "automapper.extensions.microsoft.dependencyinjection/12.0.1",
+      "hashPath": "automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512"
+    },
     "Azure.Core/1.47.1": {
       "type": "package",
       "serviceable": true,
@@ -947,6 +1032,13 @@
       "sha512": "sha512-YhNMwOTwT+I2wIcJKSdP0ADyB2aK+JaYWZxO8LSRDm5w77LFr0ykR9xmt2ZV5T1gaI7xU6iNFIh/yW1dAlpddQ==",
       "path": "azure.identity/1.14.2",
       "hashPath": "azure.identity.1.14.2.nupkg.sha512"
+    },
+    "BCrypt.Net-Next/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5YT3DKllmtkyW68PjURu/V1TOe4MKiByKwsRNVcfYE1S5KuFTeozdmKzyNzolKiQF391OXCaQtINvYT3j1ERzQ==",
+      "path": "bcrypt.net-next/4.1.0",
+      "hashPath": "bcrypt.net-next.4.1.0.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",
@@ -1074,12 +1166,26 @@
       "path": "microsoft.extensions.caching.memory/10.0.5",
       "hashPath": "microsoft.extensions.caching.memory.10.0.5.nupkg.sha512"
     },
+    "Microsoft.Extensions.Configuration/10.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8Rx5sqg04FttxrumyG6bmoRuFRgYzK6IVwF1i0/o0cXfKBdDeVpJejKHtJCMjyg9E/DNMVqpqOGe/tCT5gYvVA==",
+      "path": "microsoft.extensions.configuration/10.0.5",
+      "hashPath": "microsoft.extensions.configuration.10.0.5.nupkg.sha512"
+    },
     "Microsoft.Extensions.Configuration.Abstractions/10.0.5": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-P09QpTHjqHmCLQOTC+WyLkoRNxek4NIvfWt+TnU0etoDUSRxcltyd6+j/ouRbMdLR0j44GqGO+lhI2M4fAHG4g==",
       "path": "microsoft.extensions.configuration.abstractions/10.0.5",
       "hashPath": "microsoft.extensions.configuration.abstractions.10.0.5.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Configuration.Binder/10.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-99Z4rjyXopb1MIazDSPcvwYCUdYNO01Cf1GUs2WUjIFAbkGmwzj2vPa2k+3pheJRV+YgNd2QqRKHAri0oBAU4Q==",
+      "path": "microsoft.extensions.configuration.binder/10.0.5",
+      "hashPath": "microsoft.extensions.configuration.binder.10.0.5.nupkg.sha512"
     },
     "Microsoft.Extensions.DependencyInjection/10.0.5": {
       "type": "package",
@@ -1122,6 +1228,13 @@
       "sha512": "sha512-MDaQMdUplw0AIRhWWmbLA7yQEXaLIHb+9CTroTiNS8OlI0LMXS4LCxtopqauiqGCWlRgJ+xyraVD8t6veRAFbw==",
       "path": "microsoft.extensions.options/10.0.5",
       "hashPath": "microsoft.extensions.options.10.0.5.nupkg.sha512"
+    },
+    "Microsoft.Extensions.Options.ConfigurationExtensions/10.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BB9uUW3+6Rxu1R97OB1H/13lUF8P2+H1+eDhpZlK30kDh/6E4EKHBUqTp+ilXQmZLzsRErxON8aBSR6WpUKJdg==",
+      "path": "microsoft.extensions.options.configurationextensions/10.0.5",
+      "hashPath": "microsoft.extensions.options.configurationextensions.10.0.5.nupkg.sha512"
     },
     "Microsoft.Extensions.Primitives/10.0.5": {
       "type": "package",

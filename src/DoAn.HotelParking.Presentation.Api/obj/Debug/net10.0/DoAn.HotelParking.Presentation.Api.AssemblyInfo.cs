@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DoAn.HotelParking.Presentation.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+064eb6a12d2d0a33a24d7df4f0ad42752d79c93f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+653364a063044e886cfc5dfca3ae78bfa948b1a4")]
 [assembly: System.Reflection.AssemblyProductAttribute("DoAn.HotelParking.Presentation.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DoAn.HotelParking.Presentation.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

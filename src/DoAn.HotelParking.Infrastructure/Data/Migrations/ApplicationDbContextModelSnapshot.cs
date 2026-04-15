@@ -256,9 +256,9 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Hotel staff",
+                            Description = "Hotel owner",
                             IsActive = true,
-                            Name = "Staff",
+                            Name = "Owner",
                             UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
@@ -680,6 +680,9 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("RoomNumber")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -702,7 +705,10 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .IsUnique()
                         .HasFilter("[RoomNumber] IS NOT NULL");
 
-                    b.ToTable("Room", (string)null);
+                    b.ToTable("Room", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Room_Price", "[Price] >= 0");
+                        });
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.RoomImage", b =>

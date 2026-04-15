@@ -13,3 +13,4 @@ C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Applicati
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Application\obj\Debug\net10.0\refint\DoAn.HotelParking.Core.Application.dll
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Application\obj\Debug\net10.0\DoAn.HotelParking.Core.Application.pdb
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Application\obj\Debug\net10.0\ref\DoAn.HotelParking.Core.Application.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Core.Application\obj\Debug\net10.0\DoAn.HotelParking.Core.Application.sourcelink.json

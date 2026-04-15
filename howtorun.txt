@@ -9,4 +9,4 @@ dotnet run
 Nếu đứng ở thư mục gốc .sln thì chạy lệnh sau để chạy ứng dụng
 dotnet ef migrations add InitialCreate -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
 dotnet ef database update -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
-dotnet run --project Presentation
+dotnet run --project src\DoAn.HotelParking.Presentation.Api

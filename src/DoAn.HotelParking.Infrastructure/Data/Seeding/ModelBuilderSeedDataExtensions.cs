@@ -23,8 +23,8 @@ public static class ModelBuilderSeedDataExtensions
             new Role
             {
                 Id = 2,
-                Name = "Staff",
-                Description = "Hotel staff",
+                Name = "Owner",
+                Description = "Hotel owner",
                 IsActive = true,
                 CreatedAt = seededAt,
                 UpdatedAt = seededAt

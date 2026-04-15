@@ -17,3 +17,4 @@ C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Infrastructure
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Infrastructure\obj\Debug\net10.0\DoAn.HotelParking.Infrastructure.pdb
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Infrastructure\obj\Debug\net10.0\DoAn.HotelParking.Infrastructure.genruntimeconfig.cache
 C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Infrastructure\obj\Debug\net10.0\ref\DoAn.HotelParking.Infrastructure.dll
+C:\Users\Dell\OneDrive\Desktop\Doan\Backend\src\DoAn.HotelParking.Infrastructure\obj\Debug\net10.0\DoAn.HotelParking.Infrastructure.sourcelink.json
