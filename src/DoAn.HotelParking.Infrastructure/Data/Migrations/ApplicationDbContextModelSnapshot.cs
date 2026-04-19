@@ -83,6 +83,24 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         {
                             Id = 3,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read hotels",
+                            Module = "Hotel",
+                            PermissionKey = "hotel.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage hotels",
+                            Module = "Hotel",
+                            PermissionKey = "hotel.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Read rooms",
                             Module = "Room",
                             PermissionKey = "room.read",
@@ -90,7 +108,7 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 6,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Manage rooms",
                             Module = "Room",
@@ -99,7 +117,7 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 7,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Read bookings",
                             Module = "Booking",
@@ -108,7 +126,7 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 8,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Manage bookings",
                             Module = "Booking",
@@ -117,29 +135,128 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
-                            Id = 7,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Read parking sessions",
-                            Module = "Parking",
-                            PermissionKey = "parking.read",
-                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Manage parking sessions",
-                            Module = "Parking",
-                            PermissionKey = "parking.manage",
-                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
                             Id = 9,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read payments",
+                            Module = "Payment",
+                            PermissionKey = "payment.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage payments",
+                            Module = "Payment",
+                            PermissionKey = "payment.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read reviews",
+                            Module = "Review",
+                            PermissionKey = "review.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage reviews",
+                            Module = "Review",
+                            PermissionKey = "review.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 13,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Read notifications",
                             Module = "Notification",
                             PermissionKey = "notification.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read locations",
+                            Module = "Location",
+                            PermissionKey = "location.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage locations",
+                            Module = "Location",
+                            PermissionKey = "location.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read time slots",
+                            Module = "TimeSlot",
+                            PermissionKey = "timeslot.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage time slots",
+                            Module = "TimeSlot",
+                            PermissionKey = "timeslot.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read hotel images",
+                            Module = "HotelImage",
+                            PermissionKey = "hotelimage.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage hotel images",
+                            Module = "HotelImage",
+                            PermissionKey = "hotelimage.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage notifications",
+                            Module = "Notification",
+                            PermissionKey = "notification.manage",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Read permissions",
+                            Module = "Permission",
+                            PermissionKey = "permission.read",
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Manage permissions",
+                            Module = "Permission",
+                            PermissionKey = "permission.manage",
                             UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
@@ -348,8 +465,92 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
+                            RoleId = 1,
+                            PermissionId = 10,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 11,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 12,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 13,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 14,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 15,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 16,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 17,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 18,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 19,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 20,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 21,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 1,
+                            PermissionId = 22,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
                             RoleId = 2,
                             PermissionId = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 4,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
@@ -384,6 +585,54 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         },
                         new
                         {
+                            RoleId = 2,
+                            PermissionId = 11,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 13,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 14,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 16,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 17,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 18,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 19,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            PermissionId = 20,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
                             RoleId = 3,
                             PermissionId = 3,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
@@ -397,7 +646,49 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         new
                         {
                             RoleId = 3,
-                            PermissionId = 9,
+                            PermissionId = 7,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 8,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 11,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 12,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 13,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 14,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 16,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 18,
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
@@ -499,17 +790,21 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ApprovedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CancelledBy")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CheckInDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CheckOutDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -519,22 +814,30 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("DepositAmount")
-                        .HasColumnType("decimal(10,2)");
+                    b.Property<int>("GuestCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NightCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Note")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("PaymentProofUrl")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("RoomUnitPrice")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
+
+                    b.Property<int>("TimeSlotId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(10,2)");
@@ -546,11 +849,11 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApprovedBy");
-
                     b.HasIndex("CancelledBy");
 
-                    b.HasIndex("CreatedAt");
+                    b.HasIndex("CheckInDate");
+
+                    b.HasIndex("CheckOutDate");
 
                     b.HasIndex("CustomerId");
 
@@ -558,11 +861,19 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
                     b.HasIndex("Status");
 
+                    b.HasIndex("TimeSlotId");
+
                     b.ToTable("Booking", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Booking_DepositAmount", "[DepositAmount] >= 0");
+                            t.HasCheckConstraint("CK_Booking_CheckOutAfterCheckIn", "[CheckOutDate] > [CheckInDate]");
 
-                            t.HasCheckConstraint("CK_Booking_DepositLessThanTotal", "[DepositAmount] <= [TotalAmount]");
+                            t.HasCheckConstraint("CK_Booking_GuestCount", "[GuestCount] >= 1");
+
+                            t.HasCheckConstraint("CK_Booking_NightCount", "[NightCount] >= 1");
+
+                            t.HasCheckConstraint("CK_Booking_PaidAmount", "[PaidAmount] >= 0");
+
+                            t.HasCheckConstraint("CK_Booking_PaidAmountNotOverTotal", "[PaidAmount] <= [TotalAmount]");
 
                             t.HasCheckConstraint("CK_Booking_TotalAmount", "[TotalAmount] >= 0");
                         });
@@ -570,11 +881,17 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Booking.Payment", b =>
                 {
-                    b.Property<int>("BookingId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -586,6 +903,13 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("Note")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
@@ -594,7 +918,9 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.HasKey("BookingId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("TransactionCode")
                         .IsUnique()
@@ -629,31 +955,81 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(15)
                         .IsUnicode(false)
                         .HasColumnType("varchar(15)");
 
-                    b.Property<string>("Province")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Street")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Ward")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int>("WardId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IsDeleted");
 
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("WardId");
+
                     b.ToTable("Hotel", (string)null);
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.HotelImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("ObjectKey")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("SortOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("HotelImage", (string)null);
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.Room", b =>
@@ -711,31 +1087,6 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.RoomImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<bool>("IsMain")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomImage", (string)null);
-                });
-
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.RoomType", b =>
                 {
                     b.Property<int>("Id")
@@ -768,13 +1119,142 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                             Id = 2,
                             Description = "Deluxe room",
                             Name = "Deluxe"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Suite room",
-                            Name = "Suite"
                         });
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CancellationHoursBeforeCheckIn")
+                        .HasColumnType("int");
+
+                    b.Property<TimeOnly>("CheckInFrom")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("CheckOutUntil")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int?>("MaxStayNights")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinStayNights")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("HotelId", "IsDefault");
+
+                    b.ToTable("TimeSlot", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_TimeSlot_CancellationHours", "[CancellationHoursBeforeCheckIn] >= 0");
+
+                            t.HasCheckConstraint("CK_TimeSlot_MaxStayNights", "[MaxStayNights] IS NULL OR [MaxStayNights] >= [MinStayNights]");
+
+                            t.HasCheckConstraint("CK_TimeSlot_MinStayNights", "[MinStayNights] >= 1");
+                        });
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Location.Province", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Province", (string)null);
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Location.Ward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
+
+                    b.HasIndex("ProvinceId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Ward", (string)null);
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Notification.Notification", b =>
@@ -830,98 +1310,6 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notification", (string)null);
-                });
-
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Parking.LicensePlateLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Confidence")
-                        .HasColumnType("decimal(3,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<string>("DetectedPlate")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<int>("ParkingSessionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParkingSessionId", "CreatedAt");
-
-                    b.ToTable("LicensePlateLog", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_LicensePlateLog_Confidence", "[Confidence] >= 0 AND [Confidence] <= 1");
-                        });
-                });
-
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Parking.ParkingSession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CheckInPlate")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime>("CheckInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CheckOutPlate")
-                        .HasMaxLength(20)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<DateTime?>("CheckOutTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<int>("QrUserId")
-                        .HasColumnType("int");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("VerifiedBy")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QrUserId");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VerifiedBy");
-
-                    b.ToTable("ParkingSession", (string)null);
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Review.Review", b =>
@@ -1039,11 +1427,6 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Booking.Booking", b =>
                 {
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "ApprovedByUser")
-                        .WithMany()
-                        .HasForeignKey("ApprovedBy")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "CancelledByUser")
                         .WithMany()
                         .HasForeignKey("CancelledBy")
@@ -1061,24 +1444,60 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ApprovedByUser");
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot", "TimeSlot")
+                        .WithMany("Bookings")
+                        .HasForeignKey("TimeSlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("CancelledByUser");
 
                     b.Navigation("Customer");
 
                     b.Navigation("Room");
+
+                    b.Navigation("TimeSlot");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Booking.Payment", b =>
                 {
                     b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Booking.Booking", "Booking")
-                        .WithOne("Payment")
-                        .HasForeignKey("DoAn.HotelParking.Core.Domain.Entities.Booking.Payment", "BookingId")
+                        .WithMany("Payments")
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel", b =>
+                {
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "Owner")
+                        .WithMany("OwnedHotels")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Location.Ward", "Ward")
+                        .WithMany("Hotels")
+                        .HasForeignKey("WardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Ward");
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.HotelImage", b =>
+                {
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel", "Hotel")
+                        .WithMany("HotelImages")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.Room", b =>
@@ -1100,15 +1519,26 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.Navigation("RoomType");
                 });
 
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.RoomImage", b =>
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot", b =>
                 {
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Hotel.Room", "Room")
-                        .WithMany("RoomImages")
-                        .HasForeignKey("RoomId")
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel", "Hotel")
+                        .WithMany("TimeSlots")
+                        .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Room");
+                    b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Location.Ward", b =>
+                {
+                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Location.Province", "Province")
+                        .WithMany("Wards")
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Notification.Notification", b =>
@@ -1127,43 +1557,6 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.Navigation("Sender");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Parking.LicensePlateLog", b =>
-                {
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Parking.ParkingSession", "ParkingSession")
-                        .WithMany("LicensePlateLogs")
-                        .HasForeignKey("ParkingSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParkingSession");
-                });
-
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Parking.ParkingSession", b =>
-                {
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "QrUser")
-                        .WithMany()
-                        .HasForeignKey("QrUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DoAn.HotelParking.Core.Domain.Entities.Auth.User", "VerifiedByUser")
-                        .WithMany()
-                        .HasForeignKey("VerifiedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("QrUser");
-
-                    b.Navigation("User");
-
-                    b.Navigation("VerifiedByUser");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Review.Review", b =>
@@ -1207,6 +1600,8 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Auth.User", b =>
                 {
+                    b.Navigation("OwnedHotels");
+
                     b.Navigation("QrCodes");
 
                     b.Navigation("RefreshTokens");
@@ -1216,14 +1611,18 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Booking.Booking", b =>
                 {
-                    b.Navigation("Payment");
+                    b.Navigation("Payments");
 
                     b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel", b =>
                 {
+                    b.Navigation("HotelImages");
+
                     b.Navigation("Rooms");
+
+                    b.Navigation("TimeSlots");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.Room", b =>
@@ -1231,8 +1630,6 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("RoomImages");
                 });
 
             modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.RoomType", b =>
@@ -1240,9 +1637,19 @@ namespace DoAn.HotelParking.Infrastructure.Data.Migrations
                     b.Navigation("Rooms");
                 });
 
-            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Parking.ParkingSession", b =>
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot", b =>
                 {
-                    b.Navigation("LicensePlateLogs");
+                    b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Location.Province", b =>
+                {
+                    b.Navigation("Wards");
+                });
+
+            modelBuilder.Entity("DoAn.HotelParking.Core.Domain.Entities.Location.Ward", b =>
+                {
+                    b.Navigation("Hotels");
                 });
 #pragma warning restore 612, 618
         }

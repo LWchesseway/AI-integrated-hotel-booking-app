@@ -1,4 +1,5 @@
 using DoAn.HotelParking.Core.Domain.Enums;
+using HotelEntity = DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel;
 
 namespace DoAn.HotelParking.Core.Domain.Entities.Auth;
 
@@ -23,4 +24,5 @@ public class User
     public ICollection<UserRole> UserRoles { get; set; } = new HashSet<UserRole>();
     public ICollection<QrCode> QrCodes { get; set; } = new HashSet<QrCode>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
+    public ICollection<HotelEntity> OwnedHotels { get; set; } = new HashSet<HotelEntity>();
 }

@@ -64,12 +64,19 @@ public class AuthService : IAuthService
 
         await _userRoleRepository.AddAsync(new UserRole
         {
-            UserId = user.Id,
+            User = user,
             RoleId = role.Id,
             CreatedAt = DateTime.UtcNow
         }, cancellationToken);
 
-        var refreshToken = CreateRefreshToken(user.Id);
+        var refreshToken = new RefreshToken
+        {
+            User = user,
+            Token = _tokenService.GenerateRefreshToken(),
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            IsRevoked = false,
+            CreatedAt = DateTime.UtcNow
+        };
         await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);

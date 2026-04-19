@@ -1,0 +1,58 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+out/
+publish/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Logs and diagnostics
+*.log
+logs/
+*.tlog
+*.tmp
+*.temp
+
+# Test output
+[Tt]est[Rr]esult*/
+[Bb]enchmarkDotNet.Artifacts/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local settings / secrets
+*.env
+.env
+.env.*
+secrets.json
+appsettings.Development.json
+
+# Generated cache files
+*.cache
+*.db
+
+# Node modules (if any frontend later)
+node_modules/
+
+# Keep source, configs, and docs tracked
+!*.sln
+!*.csproj
+!*.props
+!*.targets
+!*.json
+!*.md
+!*.txt

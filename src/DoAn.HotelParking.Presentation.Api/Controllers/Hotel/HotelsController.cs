@@ -1,16 +1,121 @@
+using System.Security.Claims;
 using DoAn.HotelParking.Core.Application.DTOs.Hotel;
+using DoAn.HotelParking.Core.Application.DTOs.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Hotel;
-using DoAn.HotelParking.Presentation.Api.Controllers.Base;
+using DoAn.HotelParking.Presentation.Api.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DoAn.HotelParking.Presentation.Api.Controllers.Hotel;
 
 [Route("api/hotels")]
-[Authorize(Roles = "Admin,Owner")]
-public class HotelsController : CrudControllerBase<HotelDto, CreateHotelDto, UpdateHotelDto>
+[Authorize]
+[ApiController]
+public class HotelsController : ControllerBase
 {
-    public HotelsController(IHotelService service) : base(service)
+    private readonly IHotelService _hotelService;
+
+    public HotelsController(IHotelService service)
     {
+        _hotelService = service;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin,Owner")]
+    [HasPermission("hotel.read")]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var (items, totalCount) = await _hotelService.GetPagedAsync(pageIndex, pageSize, cancellationToken);
+        return Ok(ApiPagedResponse<HotelDto>.Ok(items, pageIndex, pageSize, totalCount));
+    }
+
+    [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,Owner")]
+    [HasPermission("hotel.read")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
+    {
+        var item = await _hotelService.GetByIdAsync(id, cancellationToken);
+        if (item is null)
+        {
+            return NotFound(ApiResponse<HotelDto>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<HotelDto>.Ok(item));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [HasPermission("hotel.manage")]
+    public async Task<IActionResult> Create([FromBody] CreateHotelDto dto, CancellationToken cancellationToken = default)
+    {
+        var created = await _hotelService.CreateAsync(dto, cancellationToken);
+        return Ok(ApiResponse<HotelDto>.Ok(created, "Created", 201));
+    }
+
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    [HasPermission("hotel.manage")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateHotelDto dto, CancellationToken cancellationToken = default)
+    {
+        var updated = await _hotelService.UpdateAsync(id, dto, cancellationToken);
+        if (updated is null)
+        {
+            return NotFound(ApiResponse<HotelDto>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<HotelDto>.Ok(updated, "Updated"));
+    }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    [HasPermission("hotel.manage")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
+    {
+        var deleted = await _hotelService.DeleteAsync(id, cancellationToken);
+        if (!deleted)
+        {
+            return NotFound(ApiResponse<object>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<object>.Ok(null, "Deleted"));
+    }
+
+    [HttpPost("owner")]
+    [Authorize(Roles = "Owner")]
+    [HasPermission("hotel.manage")]
+    public async Task<IActionResult> CreateOwnedHotel([FromBody] CreateHotelDto dto, CancellationToken cancellationToken = default)
+    {
+        var ownerId = GetCurrentUserId();
+        var hotel = await _hotelService.CreateOwnedHotelAsync(ownerId, dto, cancellationToken);
+        return Ok(ApiResponse<HotelDto>.Ok(hotel, "Created", 201));
+    }
+
+    [HttpPut("owner/{id:int}")]
+    [Authorize(Roles = "Owner")]
+    [HasPermission("hotel.manage")]
+    public async Task<IActionResult> UpdateOwnedHotel(int id, [FromBody] UpdateHotelDto dto, CancellationToken cancellationToken = default)
+    {
+        var ownerId = GetCurrentUserId();
+        var hotel = await _hotelService.UpdateOwnedHotelAsync(id, ownerId, dto, cancellationToken);
+        if (hotel is null)
+        {
+            return NotFound(ApiResponse<HotelDto>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<HotelDto>.Ok(hotel, "Updated"));
+    }
+
+    private int GetCurrentUserId()
+    {
+        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(rawUserId, out var userId))
+        {
+            throw new UnauthorizedAccessException("Unable to resolve current user from token.");
+        }
+
+        return userId;
     }
 }

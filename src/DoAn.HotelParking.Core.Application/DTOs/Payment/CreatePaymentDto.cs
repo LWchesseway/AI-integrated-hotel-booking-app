@@ -17,4 +17,9 @@ public class CreatePaymentDto
 
     [MaxLength(100)]
     public string? TransactionCode { get; set; }
+
+    [MaxLength(255)]
+    public string? Note { get; set; }
+
+    public DateTime? PaidAt { get; set; }
 }

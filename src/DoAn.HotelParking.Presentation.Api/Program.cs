@@ -1,6 +1,7 @@
 using DoAn.HotelParking.Core.Application;
 using DoAn.HotelParking.Infrastructure;
 using DoAn.HotelParking.Infrastructure.Authentication;
+using DoAn.HotelParking.Infrastructure.Data.Seeding;
 using DoAn.HotelParking.Presentation.Api.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<LocationSeeder>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -39,7 +42,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "DoAn Hotel Parking API",
+        Title = "DoAn Hotel Booking API",
         Version = "v1"
     });
 
@@ -71,12 +74,27 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("LocationSeeder");
+
+    try
+    {
+        var locationSeeder = scope.ServiceProvider.GetRequiredService<LocationSeeder>();
+        await locationSeeder.SeedLocationsAsync();
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Failed to seed location data.");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "DoAn Hotel Parking API v1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "DoAn Hotel Booking API v1");
     });
 }
 

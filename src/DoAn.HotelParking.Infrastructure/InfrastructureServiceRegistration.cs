@@ -2,13 +2,15 @@ using DoAn.HotelParking.Core.Application.Interfaces.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Auth;
 using DoAn.HotelParking.Core.Application.Interfaces.Booking;
 using DoAn.HotelParking.Core.Application.Interfaces.Hotel;
+using DoAn.HotelParking.Core.Application.Interfaces.Location;
 using DoAn.HotelParking.Core.Application.Interfaces.Notification;
-using DoAn.HotelParking.Core.Application.Interfaces.Parking;
 using DoAn.HotelParking.Core.Application.Interfaces.Payment;
 using DoAn.HotelParking.Core.Application.Interfaces.Review;
 using DoAn.HotelParking.Core.Application.Interfaces.Role;
 using DoAn.HotelParking.Core.Application.Interfaces.Room;
 using DoAn.HotelParking.Core.Application.Interfaces.RoomType;
+using DoAn.HotelParking.Core.Application.Interfaces.Storage;
+using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
 using DoAn.HotelParking.Infrastructure.Data;
 using DoAn.HotelParking.Infrastructure.Authentication;
@@ -16,14 +18,16 @@ using DoAn.HotelParking.Infrastructure.Repositories.Base;
 using DoAn.HotelParking.Infrastructure.Repositories.Auth;
 using DoAn.HotelParking.Infrastructure.Repositories.Booking;
 using DoAn.HotelParking.Infrastructure.Repositories.Hotel;
+using DoAn.HotelParking.Infrastructure.Repositories.Location;
 using DoAn.HotelParking.Infrastructure.Repositories.Notification;
-using DoAn.HotelParking.Infrastructure.Repositories.Parking;
 using DoAn.HotelParking.Infrastructure.Repositories.Payment;
 using DoAn.HotelParking.Infrastructure.Repositories.Review;
 using DoAn.HotelParking.Infrastructure.Repositories.Role;
 using DoAn.HotelParking.Infrastructure.Repositories.Room;
 using DoAn.HotelParking.Infrastructure.Repositories.RoomType;
+using DoAn.HotelParking.Infrastructure.Repositories.TimeSlot;
 using DoAn.HotelParking.Infrastructure.Repositories.User;
+using DoAn.HotelParking.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,26 +48,31 @@ public static class InfrastructureServiceRegistration
                 sql.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.Configure<MinioSettings>(configuration.GetSection("Minio"));
 
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         services.AddScoped<IHotelRepository, HotelRepository>();
+        services.AddScoped<IHotelImageRepository, HotelImageRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
+        services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
+        services.AddScoped<IProvinceRepository, ProvinceRepository>();
+        services.AddScoped<IWardRepository, WardRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
-        services.AddScoped<IParkingSessionRepository, ParkingSessionRepository>();
-        services.AddScoped<ILicensePlateLogRepository, LicensePlateLogRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
 
         services.AddScoped<ITokenService, JwtTokenService>();
+        services.AddScoped<IObjectStorageService, MinioObjectStorageService>();
 
         return services;
     }

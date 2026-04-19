@@ -11,25 +11,31 @@ public class BookingConfiguration : IEntityTypeConfiguration<DoAn.HotelParking.C
         entity.ToTable("Booking", tb =>
         {
             tb.HasCheckConstraint("CK_Booking_TotalAmount", "[TotalAmount] >= 0");
-            tb.HasCheckConstraint("CK_Booking_DepositAmount", "[DepositAmount] >= 0");
-            tb.HasCheckConstraint("CK_Booking_DepositLessThanTotal", "[DepositAmount] <= [TotalAmount]");
+            tb.HasCheckConstraint("CK_Booking_PaidAmount", "[PaidAmount] >= 0");
+            tb.HasCheckConstraint("CK_Booking_PaidAmountNotOverTotal", "[PaidAmount] <= [TotalAmount]");
+            tb.HasCheckConstraint("CK_Booking_GuestCount", "[GuestCount] >= 1");
+            tb.HasCheckConstraint("CK_Booking_NightCount", "[NightCount] >= 1");
+            tb.HasCheckConstraint("CK_Booking_CheckOutAfterCheckIn", "[CheckOutDate] > [CheckInDate]");
         });
 
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
+        entity.Property(e => e.RoomUnitPrice).HasColumnType("decimal(10,2)");
         entity.Property(e => e.TotalAmount).HasColumnType("decimal(10,2)");
-        entity.Property(e => e.DepositAmount).HasColumnType("decimal(10,2)");
-        entity.Property(e => e.PaymentProofUrl).IsUnicode(false);
+        entity.Property(e => e.PaidAmount).HasColumnType("decimal(10,2)");
         entity.Property(e => e.Note).HasMaxLength(255);
+        entity.Property(e => e.CancelReason).HasMaxLength(255);
         entity.Property(e => e.Status).HasConversion<byte>();
         entity.Property(e => e.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");
         entity.Property(e => e.UpdatedAt).HasDefaultValueSql("SYSUTCDATETIME()");
 
         entity.HasIndex(e => e.CustomerId);
         entity.HasIndex(e => e.RoomId);
+        entity.HasIndex(e => e.TimeSlotId);
         entity.HasIndex(e => e.Status);
-        entity.HasIndex(e => e.CreatedAt);
+        entity.HasIndex(e => e.CheckInDate);
+        entity.HasIndex(e => e.CheckOutDate);
 
         entity.HasOne(e => e.Room)
             .WithMany(e => e.Bookings)
@@ -41,19 +47,14 @@ public class BookingConfiguration : IEntityTypeConfiguration<DoAn.HotelParking.C
             .HasForeignKey(e => e.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        entity.HasOne(e => e.ApprovedByUser)
-            .WithMany()
-            .HasForeignKey(e => e.ApprovedBy)
-            .OnDelete(DeleteBehavior.NoAction);
+        entity.HasOne(e => e.TimeSlot)
+            .WithMany(e => e.Bookings)
+            .HasForeignKey(e => e.TimeSlotId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         entity.HasOne(e => e.CancelledByUser)
             .WithMany()
             .HasForeignKey(e => e.CancelledBy)
             .OnDelete(DeleteBehavior.NoAction);
-
-        entity.HasOne(e => e.Payment)
-            .WithOne(e => e.Booking)
-            .HasForeignKey<Payment>(e => e.BookingId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

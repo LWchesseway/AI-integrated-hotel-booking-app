@@ -18,7 +18,6 @@ public class Room
 
     public Hotel Hotel { get; set; } = null!;
     public RoomType RoomType { get; set; } = null!;
-    public ICollection<RoomImage> RoomImages { get; set; } = new HashSet<RoomImage>();
     public ICollection<BookingEntity> Bookings { get; set; } = new HashSet<BookingEntity>();
     public ICollection<ReviewEntity> Reviews { get; set; } = new HashSet<ReviewEntity>();
 }

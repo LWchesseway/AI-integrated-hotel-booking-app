@@ -1,8 +1,8 @@
 using DoAn.HotelParking.Core.Domain.Entities.Auth;
 using DoAn.HotelParking.Core.Domain.Entities.Booking;
 using DoAn.HotelParking.Core.Domain.Entities.Hotel;
+using DoAn.HotelParking.Core.Domain.Entities.Location;
 using DoAn.HotelParking.Core.Domain.Entities.Notification;
-using DoAn.HotelParking.Core.Domain.Entities.Parking;
 using DoAn.HotelParking.Core.Domain.Entities.Review;
 using DoAn.HotelParking.Infrastructure.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +23,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<QrCode> QrCodes => Set<QrCode>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
-    public DbSet<ParkingSession> ParkingSessions => Set<ParkingSession>();
-    public DbSet<LicensePlateLog> LicensePlateLogs => Set<LicensePlateLog>();
     public DbSet<Hotel> Hotels => Set<Hotel>();
     public DbSet<RoomType> RoomTypes => Set<RoomType>();
     public DbSet<Room> Rooms => Set<Room>();
-    public DbSet<RoomImage> RoomImages => Set<RoomImage>();
+    public DbSet<HotelImage> HotelImages => Set<HotelImage>();
+    public DbSet<TimeSlot> TimeSlots => Set<TimeSlot>();
+    public DbSet<Province> Provinces => Set<Province>();
+    public DbSet<Ward> Wards => Set<Ward>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<Review> Reviews => Set<Review>();
