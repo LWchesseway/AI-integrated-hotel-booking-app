@@ -84,4 +84,12 @@ public class TimeSlotsController : ControllerBase
         var items = await _timeSlotService.GetByHotelIdAsync(hotelId, cancellationToken);
         return Ok(ApiResponse<IEnumerable<TimeSlotDto>>.Ok(items));
     }
+
+    [HttpGet("room/{roomId:int}")]
+    [HasPermission("timeslot.read")]
+    public async Task<IActionResult> GetByRoomId(int roomId, CancellationToken cancellationToken = default)
+    {
+        var items = await _timeSlotService.GetByRoomIdAsync(roomId, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<TimeSlotDto>>.Ok(items));
+    }
 }

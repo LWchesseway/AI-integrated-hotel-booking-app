@@ -1,5 +1,7 @@
 using DoAn.HotelParking.Core.Domain.Enums;
+using FavoriteHotelEntity = DoAn.HotelParking.Core.Domain.Entities.Hotel.FavoriteHotel;
 using HotelEntity = DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel;
+using OwnerSettingEntity = DoAn.HotelParking.Core.Domain.Entities.OwnerSetting.OwnerSetting;
 
 namespace DoAn.HotelParking.Core.Domain.Entities.Auth;
 
@@ -22,7 +24,9 @@ public class User
     public User? DeletedByUser { get; set; }
 
     public ICollection<UserRole> UserRoles { get; set; } = new HashSet<UserRole>();
-    public ICollection<QrCode> QrCodes { get; set; } = new HashSet<QrCode>();
+    
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
     public ICollection<HotelEntity> OwnedHotels { get; set; } = new HashSet<HotelEntity>();
+    public ICollection<FavoriteHotelEntity> FavoriteHotels { get; set; } = new HashSet<FavoriteHotelEntity>();
+    public ICollection<OwnerSettingEntity> OwnerSettings { get; set; } = new HashSet<OwnerSettingEntity>();
 }

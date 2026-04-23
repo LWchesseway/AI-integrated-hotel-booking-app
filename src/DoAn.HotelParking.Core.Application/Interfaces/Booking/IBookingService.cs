@@ -14,4 +14,5 @@ public interface IBookingService
 	Task<BookingDto> CreateCustomerBookingAsync(int customerId, CustomerCreateBookingRequestDto dto, CancellationToken cancellationToken = default);
 	Task<(IEnumerable<BookingDto> Items, int TotalCount)> GetMyBookingsAsync(int customerId, int pageIndex, int pageSize, CancellationToken cancellationToken = default);
 	Task<BookingDto?> CancelMyBookingAsync(int bookingId, int customerId, string? reason, CancellationToken cancellationToken = default);
+	Task AdminForceCompleteBookingAsync(int bookingId, CancellationToken cancellationToken = default);
 }

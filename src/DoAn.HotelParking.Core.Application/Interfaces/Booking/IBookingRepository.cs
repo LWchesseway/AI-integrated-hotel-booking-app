@@ -17,4 +17,12 @@ public interface IBookingRepository : IGenericRepository<DoAn.HotelParking.Core.
 		int pageIndex,
 		int pageSize,
 		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetBookingsForOwnerAsync(
+		int ownerId,
+		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetUserBookingHistoryAsync(
+		int userId,
+		CancellationToken cancellationToken = default);
 }

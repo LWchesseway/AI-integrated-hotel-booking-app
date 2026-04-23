@@ -8,4 +8,6 @@ public class MinioSettings
     public string BucketName { get; set; } = "hotel-images";
     public bool UseSsl { get; set; }
     public string? PublicBaseUrl { get; set; }
+    public bool AutoCreateBucket { get; set; } = true;
+    public bool SetBucketPublicRead { get; set; } = true;
 }

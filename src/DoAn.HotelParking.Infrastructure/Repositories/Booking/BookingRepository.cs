@@ -54,4 +54,37 @@ public class BookingRepository : GenericRepository<DoAn.HotelParking.Core.Domain
 
         return (items, totalCount);
     }
+
+    public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetBookingsForOwnerAsync(
+        int ownerId,
+        CancellationToken cancellationToken = default)
+    {
+        return await Context.Bookings
+            .AsNoTracking()
+            .Include(b => b.Room)
+                .ThenInclude(r => r.Hotel)
+            .Include(b => b.Customer)
+            .Where(b => b.Room.Hotel.OwnerId == ownerId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetUserBookingHistoryAsync(
+        int userId,
+        CancellationToken cancellationToken = default)
+    {
+        return await Context.Bookings
+            .AsNoTracking()
+            .Include(b => b.Room)
+                .ThenInclude(r => r.Hotel)
+                    .ThenInclude(h => h.Ward)
+                        .ThenInclude(w => w.Province)
+            .Include(b => b.Room)
+                .ThenInclude(r => r.Hotel)
+                    .ThenInclude(h => h.HotelImages)
+            .Include(b => b.Room)
+                .ThenInclude(r => r.Reviews)
+            .Where(b => b.CustomerId == userId && b.Status != BookingStatus.Cancelled)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
 }

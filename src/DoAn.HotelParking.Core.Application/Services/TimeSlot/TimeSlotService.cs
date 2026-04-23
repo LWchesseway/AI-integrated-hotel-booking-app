@@ -43,6 +43,12 @@ public class TimeSlotService : ITimeSlotService
         return item is null ? default : _mapper.Map<TimeSlotDto>(item);
     }
 
+    public async Task<IEnumerable<TimeSlotDto>> GetByRoomIdAsync(int roomId, CancellationToken cancellationToken = default)
+    {
+        var items = await _timeSlotRepository.GetByRoomIdAsync(roomId, cancellationToken);
+        return _mapper.Map<IEnumerable<TimeSlotDto>>(items);
+    }
+
     public async Task<IEnumerable<TimeSlotDto>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default)
     {
         var items = await _timeSlotRepository.GetByHotelIdAsync(hotelId, cancellationToken);
@@ -51,14 +57,20 @@ public class TimeSlotService : ITimeSlotService
 
     public async Task<TimeSlotDto> CreateAsync(CreateTimeSlotDto dto, CancellationToken cancellationToken = default)
     {
-        ValidatePolicy(dto.MinStayNights, dto.MaxStayNights);
+        var startDate = dto.StartDate.Date;
+        var endDate = dto.EndDate.Date;
+        ValidateRange(startDate, endDate);
 
-        if (dto.IsDefault)
+        var existingSlots = await _timeSlotRepository.GetByRoomIdAsync(dto.RoomId, cancellationToken);
+        var hasOverlap = existingSlots.Any(slot => startDate < slot.EndDate.Date && endDate > slot.StartDate.Date);
+        if (hasOverlap)
         {
-            await _timeSlotRepository.ClearDefaultAsync(dto.HotelId, null, cancellationToken);
+            throw new InvalidOperationException("This room already has an overlapping time slot in the selected date range.");
         }
 
         var entity = _mapper.Map<TimeSlotEntity>(dto);
+        entity.StartDate = startDate;
+        entity.EndDate = endDate;
         await _timeSlotRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -67,7 +79,9 @@ public class TimeSlotService : ITimeSlotService
 
     public async Task<TimeSlotDto?> UpdateAsync(int id, UpdateTimeSlotDto dto, CancellationToken cancellationToken = default)
     {
-        ValidatePolicy(dto.MinStayNights, dto.MaxStayNights);
+        var startDate = dto.StartDate.Date;
+        var endDate = dto.EndDate.Date;
+        ValidateRange(startDate, endDate);
 
         var entity = await _timeSlotRepository.GetByIdAsync(id, cancellationToken);
         if (entity is null)
@@ -75,12 +89,19 @@ public class TimeSlotService : ITimeSlotService
             return default;
         }
 
-        if (dto.IsDefault)
+        var existingSlots = await _timeSlotRepository.GetByRoomIdAsync(dto.RoomId, cancellationToken);
+        var hasOverlap = existingSlots.Any(slot =>
+            slot.Id != id
+            && startDate < slot.EndDate.Date
+            && endDate > slot.StartDate.Date);
+        if (hasOverlap)
         {
-            await _timeSlotRepository.ClearDefaultAsync(dto.HotelId, id, cancellationToken);
+            throw new InvalidOperationException("This room already has an overlapping time slot in the selected date range.");
         }
 
         _mapper.Map(dto, entity);
+        entity.StartDate = startDate;
+        entity.EndDate = endDate;
         _timeSlotRepository.Update(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -100,16 +121,11 @@ public class TimeSlotService : ITimeSlotService
         return true;
     }
 
-    private static void ValidatePolicy(int minStayNights, int? maxStayNights)
+    private static void ValidateRange(DateTime startDate, DateTime endDate)
     {
-        if (minStayNights < 1)
+        if (endDate <= startDate)
         {
-            throw new InvalidOperationException("MinStayNights must be greater than or equal to 1.");
-        }
-
-        if (maxStayNights.HasValue && maxStayNights.Value < minStayNights)
-        {
-            throw new InvalidOperationException("MaxStayNights must be greater than or equal to MinStayNights.");
+            throw new InvalidOperationException("EndDate must be greater than StartDate.");
         }
     }
 }

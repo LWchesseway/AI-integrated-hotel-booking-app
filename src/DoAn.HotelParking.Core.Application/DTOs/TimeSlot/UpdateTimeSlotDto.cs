@@ -5,27 +5,16 @@ namespace DoAn.HotelParking.Core.Application.DTOs.TimeSlot;
 public class UpdateTimeSlotDto
 {
     [Required]
-    public int HotelId { get; set; }
+    public int RoomId { get; set; }
 
     [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = string.Empty;
+    public DateTime StartDate { get; set; }
 
     [Required]
-    public TimeOnly CheckInFrom { get; set; }
+    public DateTime EndDate { get; set; }
 
-    [Required]
-    public TimeOnly CheckOutUntil { get; set; }
+    [Range(typeof(decimal), "0", "999999999")]
+    public decimal Price { get; set; }
 
-    [Range(0, 720)]
-    public int CancellationHoursBeforeCheckIn { get; set; } = 24;
-
-    [Range(1, 365)]
-    public int MinStayNights { get; set; } = 1;
-
-    [Range(1, 365)]
-    public int? MaxStayNights { get; set; }
-
-    public bool IsDefault { get; set; }
-    public bool IsDeleted { get; set; }
+    public bool IsActive { get; set; } = true;
 }

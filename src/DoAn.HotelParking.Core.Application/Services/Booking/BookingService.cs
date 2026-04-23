@@ -2,13 +2,13 @@ using AutoMapper;
 using DoAn.HotelParking.Core.Application.DTOs.Booking;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Booking;
+using DoAn.HotelParking.Core.Application.Interfaces.OwnerSetting;
 using DoAn.HotelParking.Core.Application.Interfaces.Payment;
 using DoAn.HotelParking.Core.Application.Interfaces.Room;
 using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Core.Domain.Enums;
 using BookingEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Booking;
 using PaymentEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Payment;
-using TimeSlotEntity = DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot;
 
 namespace DoAn.HotelParking.Core.Application.Services.Booking;
 
@@ -18,6 +18,7 @@ public class BookingService : IBookingService
     private readonly IRoomRepository _roomRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly ITimeSlotRepository _timeSlotRepository;
+    private readonly IOwnerSettingService _ownerSettingService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
@@ -26,6 +27,7 @@ public class BookingService : IBookingService
         IRoomRepository roomRepository,
         IPaymentRepository paymentRepository,
         ITimeSlotRepository timeSlotRepository,
+        IOwnerSettingService ownerSettingService,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
@@ -33,6 +35,7 @@ public class BookingService : IBookingService
         _roomRepository = roomRepository;
         _paymentRepository = paymentRepository;
         _timeSlotRepository = timeSlotRepository;
+        _ownerSettingService = ownerSettingService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -63,7 +66,6 @@ public class BookingService : IBookingService
         var booking = await CreateBookingCoreAsync(
             dto.CustomerId,
             dto.RoomId,
-            dto.TimeSlotId,
             dto.CheckInDate,
             dto.CheckOutDate,
             dto.GuestCount,
@@ -83,7 +85,6 @@ public class BookingService : IBookingService
         var booking = await CreateBookingCoreAsync(
             customerId,
             dto.RoomId,
-            dto.TimeSlotId,
             dto.CheckInDate,
             dto.CheckOutDate,
             dto.GuestCount,
@@ -156,10 +157,7 @@ public class BookingService : IBookingService
         var room = await _roomRepository.GetByIdWithHotelAsync(dto.RoomId, cancellationToken)
             ?? throw new KeyNotFoundException("Room not found.");
 
-        var timeSlot = await ResolveTimeSlotAsync(room.HotelId, dto.TimeSlotId, cancellationToken);
-
         var nightCount = (checkOutDate - checkInDate).Days;
-        ValidateNightCountByPolicy(timeSlot, nightCount);
 
         var hasOverlap = await _bookingRepository.HasOverlappingBookingAsync(dto.RoomId, checkInDate, checkOutDate, id, cancellationToken);
         if (hasOverlap)
@@ -167,20 +165,20 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Room has already been booked for the selected dates.");
         }
 
-        var totalAmount = room.Price * nightCount;
+        var unitPrice = await ResolveNightlyPriceAsync(dto.RoomId, checkInDate, checkOutDate, room.Price, cancellationToken);
+        var totalAmount = unitPrice * nightCount;
         if (dto.PaidAmount > totalAmount)
         {
             throw new InvalidOperationException("Paid amount cannot exceed total amount.");
         }
 
         booking.RoomId = dto.RoomId;
-        booking.TimeSlotId = timeSlot.Id;
         booking.CustomerId = dto.CustomerId;
         booking.CheckInDate = checkInDate;
         booking.CheckOutDate = checkOutDate;
         booking.NightCount = nightCount;
         booking.GuestCount = dto.GuestCount;
-        booking.RoomUnitPrice = room.Price;
+        booking.RoomUnitPrice = unitPrice;
         booking.TotalAmount = totalAmount;
         booking.PaidAmount = dto.PaidAmount;
         booking.Note = dto.Note;
@@ -209,10 +207,26 @@ public class BookingService : IBookingService
         return true;
     }
 
+    public async Task AdminForceCompleteBookingAsync(int bookingId, CancellationToken cancellationToken = default)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(bookingId, cancellationToken)
+            ?? throw new KeyNotFoundException("Booking not found.");
+
+        if (booking.Status == BookingStatus.Cancelled)
+        {
+            throw new InvalidOperationException("Cancelled booking cannot be force-completed.");
+        }
+
+        booking.Status = BookingStatus.Completed;
+        booking.UpdatedAt = DateTime.UtcNow;
+
+        _bookingRepository.Update(booking);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task<BookingEntity> CreateBookingCoreAsync(
         int customerId,
         int roomId,
-        int? timeSlotId,
         DateTime checkInDate,
         DateTime checkOutDate,
         int guestCount,
@@ -245,10 +259,7 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Room is not available for booking.");
         }
 
-        var timeSlot = await ResolveTimeSlotAsync(room.HotelId, timeSlotId, cancellationToken);
-
         var nightCount = (checkOut - checkIn).Days;
-        ValidateNightCountByPolicy(timeSlot, nightCount);
 
         var hasOverlap = await _bookingRepository.HasOverlappingBookingAsync(roomId, checkIn, checkOut, null, cancellationToken);
         if (hasOverlap)
@@ -256,7 +267,8 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Room has already been booked for the selected dates.");
         }
 
-        var totalAmount = room.Price * nightCount;
+        var unitPrice = await ResolveNightlyPriceAsync(roomId, checkIn, checkOut, room.Price, cancellationToken);
+        var totalAmount = unitPrice * nightCount;
         if (paidAmount < 0)
         {
             throw new InvalidOperationException("Paid amount cannot be negative.");
@@ -265,6 +277,15 @@ public class BookingService : IBookingService
         if (paidAmount > totalAmount)
         {
             throw new InvalidOperationException("Paid amount cannot exceed total amount.");
+        }
+
+        if (paidAmount > 0)
+        {
+            var ownerHasValidBankInfo = await _ownerSettingService.ValidateBankInfoAsync(room.Hotel.OwnerId, cancellationToken);
+            if (!ownerHasValidBankInfo)
+            {
+                throw new InvalidOperationException("Hotel owner has not completed bank information for receiving payments.");
+            }
         }
 
         var desiredStatus = (BookingStatus)statusHint;
@@ -277,13 +298,12 @@ public class BookingService : IBookingService
         var booking = new BookingEntity
         {
             RoomId = roomId,
-            TimeSlotId = timeSlot.Id,
             CustomerId = customerId,
             CheckInDate = checkIn,
             CheckOutDate = checkOut,
             NightCount = nightCount,
             GuestCount = guestCount,
-            RoomUnitPrice = room.Price,
+            RoomUnitPrice = unitPrice,
             TotalAmount = totalAmount,
             PaidAmount = paidAmount,
             Note = note,
@@ -316,38 +336,20 @@ public class BookingService : IBookingService
         return booking;
     }
 
-    private async Task<TimeSlotEntity> ResolveTimeSlotAsync(int hotelId, int? timeSlotId, CancellationToken cancellationToken)
+    private async Task<decimal> ResolveNightlyPriceAsync(
+        int roomId,
+        DateTime checkInDate,
+        DateTime checkOutDate,
+        decimal fallbackRoomPrice,
+        CancellationToken cancellationToken)
     {
-        if (timeSlotId.HasValue)
+        var slot = await _timeSlotRepository.GetActiveByRoomAndDateRangeAsync(roomId, checkInDate, checkOutDate, cancellationToken);
+        var unitPrice = slot?.Price ?? fallbackRoomPrice;
+        if (unitPrice < 0)
         {
-            var selected = await _timeSlotRepository.GetByIdAsync(timeSlotId.Value, cancellationToken);
-            if (selected is null || selected.HotelId != hotelId || selected.IsDeleted)
-            {
-                throw new InvalidOperationException("Selected time slot is invalid for this hotel.");
-            }
-
-            return selected;
+            throw new InvalidOperationException("Room price cannot be negative.");
         }
 
-        var defaultTimeSlot = await _timeSlotRepository.GetDefaultByHotelIdAsync(hotelId, cancellationToken);
-        if (defaultTimeSlot is null)
-        {
-            throw new InvalidOperationException("No default time slot policy configured for this hotel.");
-        }
-
-        return defaultTimeSlot;
-    }
-
-    private static void ValidateNightCountByPolicy(TimeSlotEntity timeSlot, int nightCount)
-    {
-        if (nightCount < timeSlot.MinStayNights)
-        {
-            throw new InvalidOperationException($"Minimum stay is {timeSlot.MinStayNights} night(s) for the selected policy.");
-        }
-
-        if (timeSlot.MaxStayNights.HasValue && nightCount > timeSlot.MaxStayNights.Value)
-        {
-            throw new InvalidOperationException($"Maximum stay is {timeSlot.MaxStayNights.Value} night(s) for the selected policy.");
-        }
+        return unitPrice;
     }
 }

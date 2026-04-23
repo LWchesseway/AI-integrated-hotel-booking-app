@@ -2,43 +2,52 @@ using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Infrastructure.Data;
 using DoAn.HotelParking.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
+using TimeSlotEntity = DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot;
 
 namespace DoAn.HotelParking.Infrastructure.Repositories.TimeSlot;
 
-public class TimeSlotRepository : GenericRepository<DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot>, ITimeSlotRepository
+public class TimeSlotRepository : GenericRepository<TimeSlotEntity>, ITimeSlotRepository
 {
     public TimeSlotRepository(ApplicationDbContext context) : base(context)
     {
     }
 
-    public Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot?> GetDefaultByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default)
+    public Task<TimeSlotEntity?> GetActiveByRoomAndDateRangeAsync(
+        int roomId,
+        DateTime startDate,
+        DateTime endDate,
+        CancellationToken cancellationToken = default)
     {
         return Context.TimeSlots
-            .FirstOrDefaultAsync(ts => ts.HotelId == hotelId && ts.IsDefault && !ts.IsDeleted, cancellationToken);
+            .AsNoTracking()
+            .Where(ts =>
+                ts.RoomId == roomId
+                && ts.IsActive
+                && ts.StartDate <= startDate
+                && ts.EndDate >= endDate)
+            .OrderBy(ts => ts.StartDate)
+            .ThenBy(ts => ts.Id)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.TimeSlot>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TimeSlotEntity>> GetByRoomIdAsync(int roomId, CancellationToken cancellationToken = default)
     {
         return await Context.TimeSlots
-            .Where(ts => ts.HotelId == hotelId && !ts.IsDeleted)
-            .OrderByDescending(ts => ts.IsDefault)
-            .ThenBy(ts => ts.Name)
+            .AsNoTracking()
+            .Where(ts => ts.RoomId == roomId)
+            .OrderBy(ts => ts.StartDate)
+            .ThenBy(ts => ts.EndDate)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task ClearDefaultAsync(int hotelId, int? exceptTimeSlotId = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TimeSlotEntity>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default)
     {
-        var query = Context.TimeSlots.Where(ts => ts.HotelId == hotelId && ts.IsDefault);
-
-        if (exceptTimeSlotId.HasValue)
-        {
-            query = query.Where(ts => ts.Id != exceptTimeSlotId.Value);
-        }
-
-        var items = await query.ToListAsync(cancellationToken);
-        foreach (var item in items)
-        {
-            item.IsDefault = false;
-        }
+        return await Context.TimeSlots
+            .AsNoTracking()
+            .Where(ts => ts.Room.HotelId == hotelId)
+            .OrderBy(ts => ts.RoomId)
+            .ThenBy(ts => ts.StartDate)
+            .ThenBy(ts => ts.EndDate)
+            .ToListAsync(cancellationToken);
     }
 }

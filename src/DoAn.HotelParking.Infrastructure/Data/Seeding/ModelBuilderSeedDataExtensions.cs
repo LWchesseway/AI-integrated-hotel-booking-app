@@ -1,5 +1,6 @@
 using DoAn.HotelParking.Core.Domain.Entities.Auth;
 using DoAn.HotelParking.Core.Domain.Entities.Hotel;
+using DoAn.HotelParking.Core.Domain.Entities.System;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoAn.HotelParking.Infrastructure.Data.Seeding;
@@ -61,7 +62,14 @@ public static class ModelBuilderSeedDataExtensions
             new Permission { Id = 19, PermissionKey = "hotelimage.manage", Description = "Manage hotel images", Module = "HotelImage", CreatedAt = seededAt, UpdatedAt = seededAt },
             new Permission { Id = 20, PermissionKey = "notification.manage", Description = "Manage notifications", Module = "Notification", CreatedAt = seededAt, UpdatedAt = seededAt },
             new Permission { Id = 21, PermissionKey = "permission.read", Description = "Read permissions", Module = "Permission", CreatedAt = seededAt, UpdatedAt = seededAt },
-            new Permission { Id = 22, PermissionKey = "permission.manage", Description = "Manage permissions", Module = "Permission", CreatedAt = seededAt, UpdatedAt = seededAt });
+            new Permission { Id = 22, PermissionKey = "permission.manage", Description = "Manage permissions", Module = "Permission", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 23, PermissionKey = "ownersetting.read", Description = "Read owner settings", Module = "OwnerSetting", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 24, PermissionKey = "ownersetting.manage", Description = "Manage owner settings", Module = "OwnerSetting", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 25, PermissionKey = "system.manage", Description = "Manage system configuration", Module = "SystemConfig", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 26, PermissionKey = "statistics.read", Description = "Read owner statistics", Module = "Statistics", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 27, PermissionKey = "recommendation.read", Description = "Read recommendations", Module = "Recommendation", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 28, PermissionKey = "favorite.manage", Description = "Manage favorite hotels", Module = "Favorite", CreatedAt = seededAt, UpdatedAt = seededAt },
+            new Permission { Id = 29, PermissionKey = "booking.force_complete", Description = "Force complete booking", Module = "Booking", CreatedAt = seededAt, UpdatedAt = seededAt });
 
         modelBuilder.Entity<RolePermission>().HasData(
             new RolePermission { RoleId = 1, PermissionId = 1, CreatedAt = seededAt },
@@ -86,6 +94,13 @@ public static class ModelBuilderSeedDataExtensions
             new RolePermission { RoleId = 1, PermissionId = 20, CreatedAt = seededAt },
             new RolePermission { RoleId = 1, PermissionId = 21, CreatedAt = seededAt },
             new RolePermission { RoleId = 1, PermissionId = 22, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 23, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 24, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 25, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 26, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 27, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 28, CreatedAt = seededAt },
+            new RolePermission { RoleId = 1, PermissionId = 29, CreatedAt = seededAt },
 
             new RolePermission { RoleId = 2, PermissionId = 3, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 4, CreatedAt = seededAt },
@@ -102,6 +117,9 @@ public static class ModelBuilderSeedDataExtensions
             new RolePermission { RoleId = 2, PermissionId = 18, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 19, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 20, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 23, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 24, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 26, CreatedAt = seededAt },
 
             new RolePermission { RoleId = 3, PermissionId = 3, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 5, CreatedAt = seededAt },
@@ -112,10 +130,40 @@ public static class ModelBuilderSeedDataExtensions
             new RolePermission { RoleId = 3, PermissionId = 13, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 14, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 16, CreatedAt = seededAt },
-            new RolePermission { RoleId = 3, PermissionId = 18, CreatedAt = seededAt });
+            new RolePermission { RoleId = 3, PermissionId = 18, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 28, CreatedAt = seededAt });
 
         modelBuilder.Entity<RoomType>().HasData(
             new RoomType { Id = 1, Name = "Standard", Description = "Standard room" },
             new RoomType { Id = 2, Name = "Deluxe", Description = "Deluxe room" });
+
+        modelBuilder.Entity<SystemConfig>().HasData(
+            new SystemConfig
+            {
+                Id = 1,
+                ConfigKey = "DEFAULT_DEPOSIT_RATE",
+                ConfigValue = "0.30",
+                DataType = "decimal",
+                Description = "Default booking deposit rate",
+                UpdatedAt = seededAt
+            },
+            new SystemConfig
+            {
+                Id = 2,
+                ConfigKey = "MIN_BOOKING_NOTICE_HOURS",
+                ConfigValue = "2",
+                DataType = "int",
+                Description = "Minimum hours before check-in to allow booking",
+                UpdatedAt = seededAt
+            },
+            new SystemConfig
+            {
+                Id = 3,
+                ConfigKey = "ENABLE_REVIEW_SYSTEM",
+                ConfigValue = "true",
+                DataType = "boolean",
+                Description = "Enable reviews and ratings",
+                UpdatedAt = seededAt
+            });
     }
 }

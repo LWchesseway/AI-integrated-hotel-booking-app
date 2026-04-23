@@ -9,7 +9,6 @@ public class Booking
 {
     public int Id { get; set; }
     public int RoomId { get; set; }
-    public int TimeSlotId { get; set; }
     public int CustomerId { get; set; }
     public DateTime CheckInDate { get; set; }
     public DateTime CheckOutDate { get; set; }
@@ -27,7 +26,6 @@ public class Booking
     public DateTime? UpdatedAt { get; set; }
 
     public Room Room { get; set; } = null!;
-    public TimeSlot TimeSlot { get; set; } = null!;
     public User Customer { get; set; } = null!;
     public User? CancelledByUser { get; set; }
     public ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();

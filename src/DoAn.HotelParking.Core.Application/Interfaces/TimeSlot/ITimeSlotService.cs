@@ -11,5 +11,6 @@ public interface ITimeSlotService
     Task<TimeSlotDto?> UpdateAsync(int id, UpdateTimeSlotDto dto, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 
+    Task<IEnumerable<TimeSlotDto>> GetByRoomIdAsync(int roomId, CancellationToken cancellationToken = default);
     Task<IEnumerable<TimeSlotDto>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default);
 }

@@ -22,5 +22,5 @@ public class Hotel
     public Ward Ward { get; set; } = null!;
     public ICollection<Room> Rooms { get; set; } = new HashSet<Room>();
     public ICollection<HotelImage> HotelImages { get; set; } = new HashSet<HotelImage>();
-    public ICollection<TimeSlot> TimeSlots { get; set; } = new HashSet<TimeSlot>();
+    public ICollection<FavoriteHotel> FavoriteHotels { get; set; } = new HashSet<FavoriteHotel>();
 }

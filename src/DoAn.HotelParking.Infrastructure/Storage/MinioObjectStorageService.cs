@@ -2,6 +2,7 @@ using DoAn.HotelParking.Core.Application.Interfaces.Storage;
 using Microsoft.Extensions.Options;
 using Minio;
 using Minio.DataModel.Args;
+using System.Threading;
 
 namespace DoAn.HotelParking.Infrastructure.Storage;
 
@@ -9,6 +10,10 @@ public class MinioObjectStorageService : IObjectStorageService
 {
     private readonly IMinioClient _minioClient;
     private readonly MinioSettings _settings;
+    private readonly string _endpointForUrl;
+    private readonly bool _effectiveUseSsl;
+    private readonly SemaphoreSlim _bucketInitLock = new(1, 1);
+    private bool _bucketInitialized;
 
     public MinioObjectStorageService(IOptions<MinioSettings> options)
     {
@@ -22,10 +27,13 @@ public class MinioObjectStorageService : IObjectStorageService
             throw new InvalidOperationException("MinioSettings is missing required values.");
         }
 
+        var endpoint = NormalizeEndpoint(_settings.Endpoint, out _endpointForUrl, out var useSslFromEndpoint);
+        _effectiveUseSsl = _settings.UseSsl || useSslFromEndpoint;
+
         _minioClient = new MinioClient()
-            .WithEndpoint(_settings.Endpoint)
+            .WithEndpoint(endpoint)
             .WithCredentials(_settings.AccessKey, _settings.SecretKey)
-            .WithSSL(_settings.UseSsl)
+            .WithSSL(_effectiveUseSsl)
             .Build();
     }
 
@@ -66,15 +74,49 @@ public class MinioObjectStorageService : IObjectStorageService
 
     private async Task EnsureBucketExistsAsync(CancellationToken cancellationToken)
     {
-        var bucketExists = await _minioClient.BucketExistsAsync(
-            new BucketExistsArgs().WithBucket(_settings.BucketName),
-            cancellationToken);
-
-        if (!bucketExists)
+        if (_bucketInitialized)
         {
-            await _minioClient.MakeBucketAsync(
-                new MakeBucketArgs().WithBucket(_settings.BucketName),
+            return;
+        }
+
+        await _bucketInitLock.WaitAsync(cancellationToken);
+        try
+        {
+            if (_bucketInitialized)
+            {
+                return;
+            }
+
+            var bucketExists = await _minioClient.BucketExistsAsync(
+                new BucketExistsArgs().WithBucket(_settings.BucketName),
                 cancellationToken);
+
+            if (!bucketExists)
+            {
+                if (!_settings.AutoCreateBucket)
+                {
+                    throw new InvalidOperationException($"MinIO bucket '{_settings.BucketName}' does not exist.");
+                }
+
+                await _minioClient.MakeBucketAsync(
+                    new MakeBucketArgs().WithBucket(_settings.BucketName),
+                    cancellationToken);
+            }
+
+            if (_settings.SetBucketPublicRead)
+            {
+                await _minioClient.SetPolicyAsync(
+                    new SetPolicyArgs()
+                        .WithBucket(_settings.BucketName)
+                        .WithPolicy(BuildPublicReadPolicy(_settings.BucketName)),
+                    cancellationToken);
+            }
+
+            _bucketInitialized = true;
+        }
+        finally
+        {
+            _bucketInitLock.Release();
         }
     }
 
@@ -85,7 +127,49 @@ public class MinioObjectStorageService : IObjectStorageService
             return $"{_settings.PublicBaseUrl.TrimEnd('/')}/{_settings.BucketName}/{objectKey}";
         }
 
-        var scheme = _settings.UseSsl ? "https" : "http";
-        return $"{scheme}://{_settings.Endpoint}/{_settings.BucketName}/{objectKey}";
+                var scheme = _effectiveUseSsl ? "https" : "http";
+                return $"{scheme}://{_endpointForUrl}/{_settings.BucketName}/{objectKey}";
+        }
+
+        private static string NormalizeEndpoint(string endpoint, out string endpointForUrl, out bool useSslFromEndpoint)
+        {
+                var normalized = endpoint.Trim().TrimEnd('/');
+
+                if (normalized.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                        || normalized.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                        var uri = new Uri(normalized, UriKind.Absolute);
+                        if (string.IsNullOrWhiteSpace(uri.Host))
+                        {
+                                throw new InvalidOperationException("MinIO endpoint host is invalid.");
+                        }
+
+                        useSslFromEndpoint = uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
+                        endpointForUrl = uri.IsDefaultPort ? uri.Host : $"{uri.Host}:{uri.Port}";
+                        return endpointForUrl;
+                }
+
+                useSslFromEndpoint = false;
+                endpointForUrl = normalized;
+                return normalized;
+        }
+
+        private static string BuildPublicReadPolicy(string bucketName)
+        {
+                return $$"""
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": ["*"]
+                            },
+                            "Action": ["s3:GetObject"],
+                            "Resource": ["arn:aws:s3:::{{bucketName}}/*"]
+                        }
+                    ]
+                }
+                """;
     }
 }

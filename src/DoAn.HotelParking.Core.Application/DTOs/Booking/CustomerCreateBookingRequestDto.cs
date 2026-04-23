@@ -7,8 +7,6 @@ public class CustomerCreateBookingRequestDto
     [Required]
     public int RoomId { get; set; }
 
-    public int? TimeSlotId { get; set; }
-
     [Required]
     public DateTime CheckInDate { get; set; }
 

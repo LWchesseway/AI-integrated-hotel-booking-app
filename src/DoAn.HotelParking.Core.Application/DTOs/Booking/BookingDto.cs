@@ -4,7 +4,6 @@ public class BookingDto
 {
     public int Id { get; set; }
     public int RoomId { get; set; }
-    public int TimeSlotId { get; set; }
     public int CustomerId { get; set; }
     public DateTime CheckInDate { get; set; }
     public DateTime CheckOutDate { get; set; }
@@ -12,7 +11,7 @@ public class BookingDto
     public int GuestCount { get; set; }
     public decimal RoomUnitPrice { get; set; }
     public decimal TotalAmount { get; set; }
-    public decimal PaidAmount { get; set; }
+    
     public string? Note { get; set; }
     public byte Status { get; set; }
     public int? CancelledBy { get; set; }

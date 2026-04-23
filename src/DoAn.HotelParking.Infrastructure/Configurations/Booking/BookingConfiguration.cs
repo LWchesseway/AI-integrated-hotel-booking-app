@@ -32,7 +32,6 @@ public class BookingConfiguration : IEntityTypeConfiguration<DoAn.HotelParking.C
 
         entity.HasIndex(e => e.CustomerId);
         entity.HasIndex(e => e.RoomId);
-        entity.HasIndex(e => e.TimeSlotId);
         entity.HasIndex(e => e.Status);
         entity.HasIndex(e => e.CheckInDate);
         entity.HasIndex(e => e.CheckOutDate);
@@ -45,11 +44,6 @@ public class BookingConfiguration : IEntityTypeConfiguration<DoAn.HotelParking.C
         entity.HasOne(e => e.Customer)
             .WithMany()
             .HasForeignKey(e => e.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        entity.HasOne(e => e.TimeSlot)
-            .WithMany(e => e.Bookings)
-            .HasForeignKey(e => e.TimeSlotId)
             .OnDelete(DeleteBehavior.Restrict);
 
         entity.HasOne(e => e.CancelledByUser)

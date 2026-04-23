@@ -8,9 +8,6 @@ public class UpdateBookingDto
     public int RoomId { get; set; }
 
     [Required]
-    public int TimeSlotId { get; set; }
-
-    [Required]
     public int CustomerId { get; set; }
 
     [Required]
