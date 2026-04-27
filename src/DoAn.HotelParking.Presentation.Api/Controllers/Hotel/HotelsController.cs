@@ -46,6 +46,36 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(item));
     }
 
+    [HttpGet("search")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SearchByName(
+        [FromQuery] string hotelName,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(hotelName))
+        {
+            return BadRequest(ApiResponse<IEnumerable<HotelDetailDto>>.Fail("hotelName is required.", 400));
+        }
+
+        var items = await _hotelService.SearchByNameAsync(hotelName, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<HotelDetailDto>>.Ok(items));
+    }
+
+    [HttpGet("by-province")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByProvince(
+        [FromQuery] string province,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(province))
+        {
+            return BadRequest(ApiResponse<IEnumerable<HotelDetailDto>>.Fail("province is required.", 400));
+        }
+
+        var items = await _hotelService.GetByProvinceAsync(province, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<HotelDetailDto>>.Ok(items));
+    }
+
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [HasPermission("hotel.manage")]

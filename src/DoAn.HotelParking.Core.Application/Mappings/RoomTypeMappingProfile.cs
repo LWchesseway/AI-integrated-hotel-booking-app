@@ -9,6 +9,14 @@ public class RoomTypeMappingProfile : Profile
     public RoomTypeMappingProfile()
     {
         CreateMap<RoomType, RoomTypeDto>();
+        CreateMap<RoomType, RoomTypeDetailDto>()
+            .AfterMap((src, dest) =>
+            {
+                foreach (var room in dest.Rooms)
+                {
+                    room.RoomTypeName ??= src.Name;
+                }
+            });
         CreateMap<CreateRoomTypeDto, RoomType>();
         CreateMap<UpdateRoomTypeDto, RoomType>();
     }

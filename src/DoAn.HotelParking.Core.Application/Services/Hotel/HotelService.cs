@@ -43,6 +43,18 @@ public class HotelService : IHotelService
         return entity is null ? default : _mapper.Map<HotelDto>(entity);
     }
 
+    public async Task<IEnumerable<HotelDetailDto>> SearchByNameAsync(string hotelName, CancellationToken cancellationToken = default)
+    {
+        var entities = await _hotelRepository.SearchByNameWithLocationAsync(hotelName, cancellationToken);
+        return _mapper.Map<IEnumerable<HotelDetailDto>>(entities);
+    }
+
+    public async Task<IEnumerable<HotelDetailDto>> GetByProvinceAsync(string province, CancellationToken cancellationToken = default)
+    {
+        var entities = await _hotelRepository.GetByProvinceWithLocationAsync(province, cancellationToken);
+        return _mapper.Map<IEnumerable<HotelDetailDto>>(entities);
+    }
+
     public async Task<HotelDto> CreateAsync(CreateHotelDto dto, CancellationToken cancellationToken = default)
     {
         if (dto.OwnerId is null || dto.OwnerId <= 0)

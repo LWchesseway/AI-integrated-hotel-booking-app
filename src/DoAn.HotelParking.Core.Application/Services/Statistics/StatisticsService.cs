@@ -34,7 +34,7 @@ public class StatisticsService : IStatisticsService
             .Where(b => b.Status is BookingStatus.Confirmed or BookingStatus.Completed)
             .Sum(GetRevenueFromBooking);
 
-        
+
 
         var rooms = allBookings.Select(b => b.Room).GroupBy(r => r.Id).Select(g => g.First()).ToList();
         var totalRooms = rooms.Count;
@@ -57,8 +57,8 @@ public class StatisticsService : IStatisticsService
 
         return new OwnerDashboardStatsDto
         {
-           
-            
+
+
             TotalBookings = allBookings.Count,
             TodayBookings = todayBookings.Count,
             PendingBookings = pendingBookings.Count,
@@ -236,7 +236,7 @@ public class StatisticsService : IStatisticsService
         return booking.Status switch
         {
             BookingStatus.Completed => booking.TotalAmount,
-            
+
         };
     }
 

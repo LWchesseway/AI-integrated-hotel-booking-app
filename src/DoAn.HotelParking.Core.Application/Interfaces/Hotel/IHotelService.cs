@@ -7,6 +7,8 @@ public interface IHotelService
 	Task<IEnumerable<HotelDto>> GetAllAsync(CancellationToken cancellationToken = default);
 	Task<(IEnumerable<HotelDto> Items, int TotalCount)> GetPagedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default);
 	Task<HotelDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+	Task<IEnumerable<HotelDetailDto>> SearchByNameAsync(string hotelName, CancellationToken cancellationToken = default);
+	Task<IEnumerable<HotelDetailDto>> GetByProvinceAsync(string province, CancellationToken cancellationToken = default);
 	Task<HotelDto> CreateAsync(CreateHotelDto dto, CancellationToken cancellationToken = default);
 	Task<HotelDto?> UpdateAsync(int id, UpdateHotelDto dto, CancellationToken cancellationToken = default);
 	Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);

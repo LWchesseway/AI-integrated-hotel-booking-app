@@ -5,6 +5,14 @@ namespace DoAn.HotelParking.Core.Application.Interfaces.Hotel;
 
 public interface IHotelRepository : IGenericRepository<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>
 {
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> SearchByNameWithLocationAsync(
+		string hotelName,
+		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> GetByProvinceWithLocationAsync(
+		string province,
+		CancellationToken cancellationToken = default);
+
 	Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel?> GetHotelWithDetailsForRecommendationAsync(
 		int hotelId,
 		CancellationToken cancellationToken = default);

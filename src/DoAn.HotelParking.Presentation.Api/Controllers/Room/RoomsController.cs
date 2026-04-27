@@ -43,6 +43,19 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<RoomDto>.Ok(item));
     }
 
+    [HttpGet("by-room-type")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByRoomTypeId([FromQuery] int roomTypeId, CancellationToken cancellationToken = default)
+    {
+        if (roomTypeId <= 0)
+        {
+            return BadRequest(ApiResponse<IEnumerable<RoomDetailDto>>.Fail("roomTypeId must be greater than 0.", 400));
+        }
+
+        var items = await _roomService.GetByRoomTypeIdAsync(roomTypeId, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<RoomDetailDto>>.Ok(items));
+    }
+
     [HttpPost]
     [HasPermission("room.manage")]
     public async Task<IActionResult> Create([FromBody] CreateRoomDto dto, CancellationToken cancellationToken = default)

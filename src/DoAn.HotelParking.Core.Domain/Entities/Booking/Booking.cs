@@ -17,6 +17,7 @@ public class Booking
     public decimal RoomUnitPrice { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal PaidAmount { get; set; }
+
     public string? Note { get; set; }
     public BookingStatus Status { get; set; }
     public int? CancelledBy { get; set; }

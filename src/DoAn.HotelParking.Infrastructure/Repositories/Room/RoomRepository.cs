@@ -17,4 +17,16 @@ public class RoomRepository : GenericRepository<DoAn.HotelParking.Core.Domain.En
             .Include(r => r.Hotel)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
+
+    public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Room>> GetByRoomTypeIdWithDetailsAsync(
+        int roomTypeId,
+        CancellationToken cancellationToken = default)
+    {
+        return await Context.Rooms
+            .AsNoTracking()
+            .Include(r => r.Hotel)
+            .Include(r => r.RoomType)
+            .Where(r => r.RoomTypeId == roomTypeId)
+            .ToListAsync(cancellationToken);
+    }
 }

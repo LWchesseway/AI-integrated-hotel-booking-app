@@ -43,6 +43,12 @@ public class RoomService : IRoomService
         return entity is null ? default : _mapper.Map<RoomDto>(entity);
     }
 
+    public async Task<IEnumerable<RoomDetailDto>> GetByRoomTypeIdAsync(int roomTypeId, CancellationToken cancellationToken = default)
+    {
+        var entities = await _roomRepository.GetByRoomTypeIdWithDetailsAsync(roomTypeId, cancellationToken);
+        return _mapper.Map<IEnumerable<RoomDetailDto>>(entities);
+    }
+
     public async Task<RoomDto> CreateAsync(CreateRoomDto dto, CancellationToken cancellationToken = default)
     {
         var entity = _mapper.Map<RoomEntity>(dto);
