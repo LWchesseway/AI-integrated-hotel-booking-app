@@ -6,5 +6,6 @@ public enum NotificationType : byte
     Booking = 1,
     Payment = 2,
     Parking = 3,
-    System = 4
+    System = 4,
+    Review = 5
 }

@@ -9,6 +9,10 @@ public interface IHotelRepository : IGenericRepository<DoAn.HotelParking.Core.Do
 		string hotelName,
 		CancellationToken cancellationToken = default);
 
+	Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel?> GetByRoomIdAsync(
+		int roomId,
+		CancellationToken cancellationToken = default);
+
 	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> GetByProvinceWithLocationAsync(
 		string province,
 		CancellationToken cancellationToken = default);

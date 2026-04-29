@@ -9,15 +9,18 @@ namespace DoAn.HotelParking.Core.Application.Services.Notification;
 public class NotificationService : INotificationService
 {
     private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationPushService _notificationPushService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public NotificationService(
         INotificationRepository repository,
+        INotificationPushService notificationPushService,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
         _notificationRepository = repository;
+        _notificationPushService = notificationPushService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -43,13 +46,26 @@ public class NotificationService : INotificationService
         return entity is null ? default : _mapper.Map<NotificationDto>(entity);
     }
 
-    public async Task<NotificationDto> CreateAsync(CreateNotificationDto dto, CancellationToken cancellationToken = default)
-    {
-        var entity = _mapper.Map<NotificationEntity>(dto);
-        await _notificationRepository.AddAsync(entity, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<NotificationDto>(entity);
-    }
+  public async Task<NotificationDto> CreateAsync(CreateNotificationDto dto, CancellationToken cancellationToken = default)
+{
+    var entity = _mapper.Map<NotificationEntity>(dto);
+
+    await _notificationRepository.AddAsync(entity, cancellationToken);
+    await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+   await _notificationPushService.PushToUserAsync(new NotificationPushPayload(
+    NotificationId: entity.Id,
+    UserId: entity.UserId,
+    Title: entity.Title,
+    Message: entity.Message,
+    Type: (byte)entity.Type,
+    RelatedTable: entity.RelatedTable,
+    RelatedId: entity.RelatedId,
+    CreatedAt: entity.CreatedAt
+));
+
+    return _mapper.Map<NotificationDto>(entity);
+}
 
     public async Task<NotificationDto?> UpdateAsync(int id, UpdateNotificationDto dto, CancellationToken cancellationToken = default)
     {

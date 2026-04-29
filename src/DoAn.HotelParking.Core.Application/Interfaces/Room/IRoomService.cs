@@ -11,4 +11,6 @@ public interface IRoomService
 	Task<RoomDto> CreateAsync(CreateRoomDto dto, CancellationToken cancellationToken = default);
 	Task<RoomDto?> UpdateAsync(int id, UpdateRoomDto dto, CancellationToken cancellationToken = default);
 	Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<RoomDetailDto>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default);
 }

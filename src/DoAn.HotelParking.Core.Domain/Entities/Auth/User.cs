@@ -14,6 +14,8 @@ public class User
     public string? Phone { get; set; }
     public string? Password { get; set; }
     public string? AvatarUrl { get; set; }
+    public string? FcmToken { get; set; }
+    public DateTime? FcmTokenUpdatedAt { get; set; }
     public UserStatus Status { get; set; }
     public bool IsDeleted { get; set; }
     public int? DeletedBy { get; set; }

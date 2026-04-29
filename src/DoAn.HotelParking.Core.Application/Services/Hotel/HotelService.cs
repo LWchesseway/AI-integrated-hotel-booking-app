@@ -28,6 +28,13 @@ public class HotelService : IHotelService
         return _mapper.Map<IEnumerable<HotelDto>>(entities);
     }
 
+    //Find hotel by room id
+    public async Task<HotelDto?> GetByRoomIdAsync(int roomId, CancellationToken cancellationToken = default)
+    {
+        var entity = await _hotelRepository.GetByRoomIdAsync(roomId, cancellationToken);
+        return entity is null ? default : _mapper.Map<HotelDto>(entity);
+    }
+
     public async Task<(IEnumerable<HotelDto> Items, int TotalCount)> GetPagedAsync(
         int pageIndex,
         int pageSize,

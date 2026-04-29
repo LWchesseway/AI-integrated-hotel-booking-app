@@ -1,5 +1,6 @@
 using AutoMapper;
 using DoAn.HotelParking.Core.Application.DTOs.Booking;
+using DoAn.HotelParking.Core.Application.DTOs.Notification;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Booking;
 using DoAn.HotelParking.Core.Application.Interfaces.OwnerSetting;
@@ -9,6 +10,8 @@ using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Core.Domain.Enums;
 using BookingEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Booking;
 using PaymentEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Payment;
+using INotificationService = DoAn.HotelParking.Core.Application.Interfaces.Notification.INotificationService;
+using DoAn.HotelParking.Core.Application.Interfaces.Hotel;
 
 namespace DoAn.HotelParking.Core.Application.Services.Booking;
 
@@ -22,6 +25,10 @@ public class BookingService : IBookingService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
+    private readonly IHotelRepository _hotelRepository;
+
+    private readonly INotificationService _notificationService;
+
     public BookingService(
         IBookingRepository bookingRepository,
         IRoomRepository roomRepository,
@@ -29,14 +36,18 @@ public class BookingService : IBookingService
         ITimeSlotRepository timeSlotRepository,
         IOwnerSettingService ownerSettingService,
         IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,
+        IHotelRepository hotelRepository,
+        INotificationService notificationService)
     {
         _bookingRepository = bookingRepository;
         _roomRepository = roomRepository;
         _paymentRepository = paymentRepository;
         _timeSlotRepository = timeSlotRepository;
+        _hotelRepository = hotelRepository;
         _ownerSettingService = ownerSettingService;
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
         _mapper = mapper;
     }
 
@@ -76,6 +87,26 @@ public class BookingService : IBookingService
             dto.PaymentNote,
             dto.Status,
             cancellationToken);
+
+      
+        
+        // lấy hotel
+        var hotel = await _hotelRepository.GetByRoomIdAsync(dto.RoomId, cancellationToken);
+       
+
+        var ownerId = hotel.OwnerId;
+
+        await _notificationService.CreateAsync(new CreateNotificationDto
+        {
+            UserId = ownerId,
+            SenderId = dto.CustomerId,
+            Title = "Có đơn đặt phòng mới",
+            Message = $"Khách hàng vừa đặt phòng #{booking.Id}. Vui lòng xác nhận.",
+            Type = (byte)NotificationType.Booking,
+            RelatedTable = "Bookings",
+            RelatedId = booking.Id
+        });
+        
 
         return _mapper.Map<BookingDto>(booking);
     }

@@ -40,6 +40,8 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
             .ToListAsync(cancellationToken);
     }
 
+
+
     public Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel?> GetHotelWithDetailsForRecommendationAsync(
         int hotelId,
         CancellationToken cancellationToken = default)
@@ -56,6 +58,15 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
             .FirstOrDefaultAsync(h => h.Id == hotelId && !h.IsDeleted && h.Status == HotelStatus.Active, cancellationToken);
     }
 
+    public Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel?> GetByRoomIdAsync(
+        int roomId,
+        CancellationToken cancellationToken = default)
+    {
+        return Context.Hotels
+            .AsNoTracking()
+            .Include(h => h.Rooms)
+            .FirstOrDefaultAsync(h => h.Rooms.Any(r => r.Id == roomId) && !h.IsDeleted, cancellationToken);
+    }
     public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> GetAllActiveHotelsWithDetailsAsync(
         string? province = null,
         string? ward = null,

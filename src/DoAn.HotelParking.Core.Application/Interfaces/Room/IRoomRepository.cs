@@ -10,4 +10,8 @@ public interface IRoomRepository : IGenericRepository<DoAn.HotelParking.Core.Dom
 	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Room>> GetByRoomTypeIdWithDetailsAsync(
 		int roomTypeId,
 		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Room>> GetByHotelIdWithDetailsAsync(
+		int hotelId,
+		CancellationToken cancellationToken = default);
 }

@@ -30,6 +30,20 @@ public class RoomsController : ControllerBase
         return Ok(ApiPagedResponse<RoomDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    // Get all rooms by hotel id
+    [HttpGet("by-hotel")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetByHotelId([FromQuery] int hotelId, CancellationToken cancellationToken = default)
+    {
+        if (hotelId <= 0)
+        {
+            return BadRequest(ApiResponse<IEnumerable<RoomDetailDto>>.Fail("hotelId must be greater than 0.", 400));
+        }
+
+        var items = await _roomService.GetByHotelIdAsync(hotelId, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<RoomDetailDto>>.Ok(items));
+    }
+
     [HttpGet("{id:int}")]
     [HasPermission("room.read")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)

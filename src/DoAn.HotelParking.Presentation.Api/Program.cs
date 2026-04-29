@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using DoAn.HotelParking.Infrastructure.Notification;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,17 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<LocationSeeder>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
     ?? throw new InvalidOperationException("JwtSettings section is missing or invalid.");
@@ -72,6 +87,28 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.Configure<FirebaseSettings>(
+    builder.Configuration.GetSection("Firebase"));
+
+builder.Services.AddSingleton(sp =>
+{
+    var firebaseSettings = sp.GetRequiredService<IOptions<FirebaseSettings>>().Value;
+
+    if (string.IsNullOrWhiteSpace(firebaseSettings.CredentialsPath))
+        throw new Exception("Firebase CredentialsPath is missing in appsettings.json");
+
+    var fullPath = Path.Combine(AppContext.BaseDirectory, firebaseSettings.CredentialsPath);
+
+    if (!File.Exists(fullPath))
+        throw new FileNotFoundException($"Firebase credentials file not found: {fullPath}");
+
+    return FirebaseApp.Create(new AppOptions
+    {
+        Credential = GoogleCredential.FromFile(fullPath),
+        ProjectId = firebaseSettings.ProjectId
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -99,11 +136,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-
 
 app.Run();

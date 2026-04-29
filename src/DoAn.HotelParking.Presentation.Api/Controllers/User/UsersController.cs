@@ -30,6 +30,23 @@ public class UsersController : ControllerBase
         return Ok(ApiPagedResponse<UserDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    [HttpPost("fcm-token")]
+public async Task<IActionResult> UpdateFcmToken([FromBody] UpdateFcmTokenDto dto)
+{
+    var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+    if (string.IsNullOrWhiteSpace(userIdClaim))
+        return Unauthorized();
+
+    var userId = int.Parse(userIdClaim);
+
+    var result = await _userService.UpdateFcmTokenAsync(userId, dto.Token);
+
+    if (!result)
+        return NotFound();
+
+    return Ok(ApiResponse<string>.Ok("FCM token updated"));
+}
+
     [HttpGet("{id:int}")]
     [HasPermission("user.read")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)

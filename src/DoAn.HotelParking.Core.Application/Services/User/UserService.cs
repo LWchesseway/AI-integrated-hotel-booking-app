@@ -30,6 +30,19 @@ public class UserService : IUserService
         return _mapper.Map<IEnumerable<UserDto>>(entities);
     }
 
+
+    public async Task<bool> UpdateFcmTokenAsync(int userId, string token)
+{
+        var user = await _userRepository.GetByIdAsync(userId);
+
+    if (user == null) return false;
+
+    user.FcmToken = token;
+    user.FcmTokenUpdatedAt = DateTime.UtcNow;
+
+    await _unitOfWork.SaveChangesAsync();
+    return true;
+}
     public async Task<(IEnumerable<UserDto> Items, int TotalCount)> GetPagedAsync(
         int pageIndex,
         int pageSize,
