@@ -20,6 +20,7 @@ public class HotelsController : ControllerBase
         _hotelService = service;
     }
 
+    
     [HttpGet]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("hotel.read")]
@@ -29,7 +30,20 @@ public class HotelsController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var (items, totalCount) = await _hotelService.GetPagedAsync(pageIndex, pageSize, cancellationToken);
-        return Ok(ApiPagedResponse<HotelDto>.Ok(items, pageIndex, pageSize, totalCount));
+        return Ok(ApiPagedResponse<HotelDetailDto>.Ok(items, pageIndex, pageSize, totalCount));
+    }
+
+    // Get all hotels with pagination and province of that hotel
+    [HttpGet("all-with-province")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAllWithProvince(
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+       var (items, totalCount) = await _hotelService.GetPagedWithProvinceAsync(pageIndex, pageSize, cancellationToken);
+       
+        return Ok(ApiPagedResponse<HotelDetailDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
     [HttpGet("{id:int}")]
@@ -38,6 +52,20 @@ public class HotelsController : ControllerBase
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
     {
         var item = await _hotelService.GetByIdAsync(id, cancellationToken);
+        if (item is null)
+        {
+            return NotFound(ApiResponse<HotelDto>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<HotelDto>.Ok(item));
+    }
+
+    // Search hotel by  id and return location of that hotel
+    [HttpGet("{id:int}/with-location")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetHotelWithLocation(int id, CancellationToken cancellationToken = default)
+    {
+        var item = await _hotelService.GetByIdWithLocationAsync(id, cancellationToken);
         if (item is null)
         {
             return NotFound(ApiResponse<HotelDto>.Fail("Not found", 404));

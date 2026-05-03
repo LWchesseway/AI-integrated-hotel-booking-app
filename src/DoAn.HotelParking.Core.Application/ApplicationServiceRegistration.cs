@@ -20,6 +20,7 @@ using DoAn.HotelParking.Core.Application.Services.Booking;
 using DoAn.HotelParking.Core.Application.Services.Hotel;
 using DoAn.HotelParking.Core.Application.Services.Location;
 using DoAn.HotelParking.Core.Application.Services.Notification;
+using DoAn.HotelParking.Core.Application.Services.Notification.Helpers;
 using DoAn.HotelParking.Core.Application.Services.OwnerSetting;
 using DoAn.HotelParking.Core.Application.Services.Payment;
 using DoAn.HotelParking.Core.Application.Services.Recommendation;
@@ -61,6 +62,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<INotificationHelper, NotificationHelper>();
 
         return services;
     }

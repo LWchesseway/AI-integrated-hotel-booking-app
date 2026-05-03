@@ -1,8 +1,9 @@
 using AutoMapper;
 using DoAn.HotelParking.Core.Application.DTOs.Booking;
-using DoAn.HotelParking.Core.Application.DTOs.Notification;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Booking;
+using DoAn.HotelParking.Core.Application.Interfaces.Hotel;
+using DoAn.HotelParking.Core.Application.Interfaces.Notification;
 using DoAn.HotelParking.Core.Application.Interfaces.OwnerSetting;
 using DoAn.HotelParking.Core.Application.Interfaces.Payment;
 using DoAn.HotelParking.Core.Application.Interfaces.Room;
@@ -10,8 +11,6 @@ using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Core.Domain.Enums;
 using BookingEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Booking;
 using PaymentEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Payment;
-using INotificationService = DoAn.HotelParking.Core.Application.Interfaces.Notification.INotificationService;
-using DoAn.HotelParking.Core.Application.Interfaces.Hotel;
 
 namespace DoAn.HotelParking.Core.Application.Services.Booking;
 
@@ -26,8 +25,7 @@ public class BookingService : IBookingService
     private readonly IMapper _mapper;
 
     private readonly IHotelRepository _hotelRepository;
-
-    private readonly INotificationService _notificationService;
+    private readonly INotificationHelper _notificationHelper;
 
     public BookingService(
         IBookingRepository bookingRepository,
@@ -38,7 +36,7 @@ public class BookingService : IBookingService
         IUnitOfWork unitOfWork,
         IMapper mapper,
         IHotelRepository hotelRepository,
-        INotificationService notificationService)
+        INotificationHelper notificationHelper)
     {
         _bookingRepository = bookingRepository;
         _roomRepository = roomRepository;
@@ -47,7 +45,7 @@ public class BookingService : IBookingService
         _hotelRepository = hotelRepository;
         _ownerSettingService = ownerSettingService;
         _unitOfWork = unitOfWork;
-        _notificationService = notificationService;
+        _notificationHelper = notificationHelper;
         _mapper = mapper;
     }
 
@@ -90,22 +88,24 @@ public class BookingService : IBookingService
 
       
         
-        // lấy hotel
         var hotel = await _hotelRepository.GetByRoomIdAsync(dto.RoomId, cancellationToken);
-       
-
-        var ownerId = hotel.OwnerId;
-
-        await _notificationService.CreateAsync(new CreateNotificationDto
+        if (hotel is not null)
         {
-            UserId = ownerId,
-            SenderId = dto.CustomerId,
-            Title = "Có đơn đặt phòng mới",
-            Message = $"Khách hàng vừa đặt phòng #{booking.Id}. Vui lòng xác nhận.",
-            Type = (byte)NotificationType.Booking,
-            RelatedTable = "Bookings",
-            RelatedId = booking.Id
-        });
+            await _notificationHelper.SendBookingCreatedAsync(
+                hotel.OwnerId,
+                dto.CustomerId,
+                booking.Id,
+                cancellationToken);
+        }
+
+        if (dto.PaidAmount > 0)
+        {
+            await _notificationHelper.SendPaymentStatusAsync(
+                dto.CustomerId,
+                booking.Id,
+                PaymentStatus.Completed,
+                cancellationToken);
+        }
         
 
         return _mapper.Map<BookingDto>(booking);
@@ -126,6 +126,25 @@ public class BookingService : IBookingService
             dto.PaymentNote,
             (byte)BookingStatus.Pending,
             cancellationToken);
+
+        var hotel = await _hotelRepository.GetByRoomIdAsync(dto.RoomId, cancellationToken);
+        if (hotel is not null)
+        {
+            await _notificationHelper.SendBookingCreatedAsync(
+                hotel.OwnerId,
+                customerId,
+                booking.Id,
+                cancellationToken);
+        }
+
+        if (dto.PaidAmount > 0)
+        {
+            await _notificationHelper.SendPaymentStatusAsync(
+                customerId,
+                booking.Id,
+                PaymentStatus.Completed,
+                cancellationToken);
+        }
 
         return _mapper.Map<BookingDto>(booking);
     }
@@ -162,6 +181,12 @@ public class BookingService : IBookingService
         _bookingRepository.Update(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        await _notificationHelper.SendBookingStatusChangedAsync(
+            booking.CustomerId,
+            booking.Id,
+            booking.Status,
+            cancellationToken);
+
         return _mapper.Map<BookingDto>(booking);
     }
 
@@ -172,6 +197,8 @@ public class BookingService : IBookingService
         {
             return default;
         }
+
+        var previousStatus = booking.Status;
 
         var checkInDate = dto.CheckInDate.Date;
         var checkOutDate = dto.CheckOutDate.Date;
@@ -222,6 +249,15 @@ public class BookingService : IBookingService
         _bookingRepository.Update(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        if (booking.Status != previousStatus)
+        {
+            await _notificationHelper.SendBookingStatusChangedAsync(
+                booking.CustomerId,
+                booking.Id,
+                booking.Status,
+                cancellationToken);
+        }
+
         return _mapper.Map<BookingDto>(booking);
     }
 
@@ -253,6 +289,12 @@ public class BookingService : IBookingService
 
         _bookingRepository.Update(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _notificationHelper.SendBookingStatusChangedAsync(
+            booking.CustomerId,
+            booking.Id,
+            booking.Status,
+            cancellationToken);
     }
 
     private async Task<BookingEntity> CreateBookingCoreAsync(

@@ -1,6 +1,8 @@
 using AutoMapper;
 using DoAn.HotelParking.Core.Application.DTOs.Payment;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
+using DoAn.HotelParking.Core.Application.Interfaces.Booking;
+using DoAn.HotelParking.Core.Application.Interfaces.Notification;
 using DoAn.HotelParking.Core.Application.Interfaces.Payment;
 using PaymentEntity = DoAn.HotelParking.Core.Domain.Entities.Booking.Payment;
 
@@ -9,15 +11,21 @@ namespace DoAn.HotelParking.Core.Application.Services.Payment;
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _paymentRepository;
+    private readonly IBookingRepository _bookingRepository;
+    private readonly INotificationHelper _notificationHelper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public PaymentService(
         IPaymentRepository repository,
+        IBookingRepository bookingRepository,
+        INotificationHelper notificationHelper,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
         _paymentRepository = repository;
+        _bookingRepository = bookingRepository;
+        _notificationHelper = notificationHelper;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -48,6 +56,7 @@ public class PaymentService : IPaymentService
         var entity = _mapper.Map<PaymentEntity>(dto);
         await _paymentRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await NotifyPaymentAsync(entity, cancellationToken);
         return _mapper.Map<PaymentDto>(entity);
     }
 
@@ -59,9 +68,15 @@ public class PaymentService : IPaymentService
             return default;
         }
 
+        var previousStatus = entity.Status;
         _mapper.Map(dto, entity);
         _paymentRepository.Update(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (entity.Status != previousStatus)
+        {
+            await NotifyPaymentAsync(entity, cancellationToken);
+        }
         return _mapper.Map<PaymentDto>(entity);
     }
 
@@ -76,5 +91,20 @@ public class PaymentService : IPaymentService
         _paymentRepository.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    private async Task NotifyPaymentAsync(PaymentEntity payment, CancellationToken cancellationToken)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(payment.BookingId, cancellationToken);
+        if (booking is null)
+        {
+            return;
+        }
+
+        await _notificationHelper.SendPaymentStatusAsync(
+            booking.CustomerId,
+            payment.BookingId,
+            payment.Status,
+            cancellationToken);
     }
 }

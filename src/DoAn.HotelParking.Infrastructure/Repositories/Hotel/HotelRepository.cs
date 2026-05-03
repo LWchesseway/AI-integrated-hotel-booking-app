@@ -26,6 +26,29 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<(IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel> Items, int TotalCount)> GetPagedWithProvinceAsync(
+        int pageIndex,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = Context.Hotels
+            .AsNoTracking()
+            .Include(h => h.Ward)
+                .ThenInclude(w => w.Province)
+            .Where(h => !h.IsDeleted);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderBy(h => h.Name)
+            .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
+    
+
     public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> GetByProvinceWithLocationAsync(
         string province,
         CancellationToken cancellationToken = default)
@@ -96,5 +119,18 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
         }
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public Task<Core.Domain.Entities.Hotel.Hotel?> GetByIdWithLocationAsync(int id, CancellationToken cancellationToken = default)
+    {
+        if (id == 0)        {
+            return Task.FromResult<Core.Domain.Entities.Hotel.Hotel?>(null);
+        }
+        var query = new Core.Domain.Entities.Hotel.Hotel[] { }.AsQueryable();
+        query = query.Where(h => h.Id == id && !h.IsDeleted)
+            .Include(h => h.Ward)
+                .ThenInclude(w => w.Province);
+        return query.FirstOrDefaultAsync(cancellationToken);
+        
     }
 }

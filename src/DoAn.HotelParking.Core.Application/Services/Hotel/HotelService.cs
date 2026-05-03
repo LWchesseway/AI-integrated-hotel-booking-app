@@ -28,6 +28,21 @@ public class HotelService : IHotelService
         return _mapper.Map<IEnumerable<HotelDto>>(entities);
     }
 
+    public async Task<(IEnumerable<HotelDetailDto> Items, int TotalCount)> GetPagedWithProvinceAsync(
+        int pageIndex,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var (items, totalCount) = await _hotelRepository.GetPagedWithProvinceAsync(pageIndex, pageSize, cancellationToken);
+        return (_mapper.Map<IEnumerable<HotelDetailDto>>(items), totalCount);
+    }
+
+    public async Task<HotelDto?> GetByIdWithLocationAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _hotelRepository.GetByIdWithLocationAsync(id, cancellationToken);
+        return entity is null ? default : _mapper.Map<HotelDto>(entity);
+    }
+
     //Find hotel by room id
     public async Task<HotelDto?> GetByRoomIdAsync(int roomId, CancellationToken cancellationToken = default)
     {
@@ -35,13 +50,13 @@ public class HotelService : IHotelService
         return entity is null ? default : _mapper.Map<HotelDto>(entity);
     }
 
-    public async Task<(IEnumerable<HotelDto> Items, int TotalCount)> GetPagedAsync(
+    public async Task<(IEnumerable<HotelDetailDto> Items, int TotalCount)> GetPagedAsync(
         int pageIndex,
         int pageSize,
         CancellationToken cancellationToken = default)
     {
         var (items, totalCount) = await _hotelRepository.GetPagedAsync(pageIndex, pageSize, null, cancellationToken);
-        return (_mapper.Map<IEnumerable<HotelDto>>(items), totalCount);
+        return (_mapper.Map<IEnumerable<HotelDetailDto>>(items), totalCount);
     }
 
     public async Task<HotelDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)

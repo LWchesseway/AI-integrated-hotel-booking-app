@@ -5,6 +5,8 @@ public class HotelDto
     public int Id { get; set; }
     public int OwnerId { get; set; }
     public int WardId { get; set; }
+
+   
     public string? Name { get; set; }
     public string? Street { get; set; }
     public string? Phone { get; set; }

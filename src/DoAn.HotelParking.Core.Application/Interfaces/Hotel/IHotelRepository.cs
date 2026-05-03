@@ -25,4 +25,13 @@ public interface IHotelRepository : IGenericRepository<DoAn.HotelParking.Core.Do
 		string? province = null,
 		string? ward = null,
 		CancellationToken cancellationToken = default);
+
+	Task<(IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel> Items, int TotalCount)> GetPagedWithProvinceAsync(
+		int pageIndex,
+		int pageSize,
+		CancellationToken cancellationToken = default);
+
+	Task<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel?> GetByIdWithLocationAsync(
+		int id,
+		CancellationToken cancellationToken = default);
 }

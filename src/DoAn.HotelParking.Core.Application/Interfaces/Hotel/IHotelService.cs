@@ -5,7 +5,12 @@ namespace DoAn.HotelParking.Core.Application.Interfaces.Hotel;
 public interface IHotelService
 {
 	Task<IEnumerable<HotelDto>> GetAllAsync(CancellationToken cancellationToken = default);
-	Task<(IEnumerable<HotelDto> Items, int TotalCount)> GetPagedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default);
+
+    Task<(IEnumerable<HotelDetailDto> Items, int TotalCount)> GetPagedWithProvinceAsync(
+		int pageIndex,
+		int pageSize,
+		CancellationToken cancellationToken = default);
+	Task<(IEnumerable<HotelDetailDto> Items, int TotalCount)> GetPagedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default);
 	Task<HotelDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 	Task<IEnumerable<HotelDetailDto>> SearchByNameAsync(string hotelName, CancellationToken cancellationToken = default);
 	Task<IEnumerable<HotelDetailDto>> GetByProvinceAsync(string province, CancellationToken cancellationToken = default);

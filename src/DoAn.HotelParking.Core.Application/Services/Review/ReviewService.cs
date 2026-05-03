@@ -1,6 +1,8 @@
 using AutoMapper;
 using DoAn.HotelParking.Core.Application.DTOs.Review;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
+using DoAn.HotelParking.Core.Application.Interfaces.Notification;
+using DoAn.HotelParking.Core.Application.Interfaces.Room;
 using DoAn.HotelParking.Core.Application.Interfaces.Review;
 using ReviewEntity = DoAn.HotelParking.Core.Domain.Entities.Review.Review;
 
@@ -9,15 +11,21 @@ namespace DoAn.HotelParking.Core.Application.Services.Review;
 public class ReviewService : IReviewService
 {
     private readonly IReviewRepository _reviewRepository;
+    private readonly IRoomRepository _roomRepository;
+    private readonly INotificationHelper _notificationHelper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public ReviewService(
         IReviewRepository repository,
+        IRoomRepository roomRepository,
+        INotificationHelper notificationHelper,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
         _reviewRepository = repository;
+        _roomRepository = roomRepository;
+        _notificationHelper = notificationHelper;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -48,6 +56,19 @@ public class ReviewService : IReviewService
         var entity = _mapper.Map<ReviewEntity>(dto);
         await _reviewRepository.AddAsync(entity, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var room = await _roomRepository.GetByIdWithHotelAsync(entity.RoomId, cancellationToken);
+        if (room?.Hotel is not null)
+        {
+            await _notificationHelper.SendReviewCreatedAsync(
+                room.Hotel.OwnerId,
+                entity.CustomerId,
+                entity.Id,
+                entity.BookingId,
+                entity.Rating,
+                cancellationToken);
+        }
+
         return _mapper.Map<ReviewDto>(entity);
     }
 
