@@ -20,4 +20,5 @@ public interface IHotelService
 
 	Task<HotelDto> CreateOwnedHotelAsync(int ownerId, CreateHotelDto dto, CancellationToken cancellationToken = default);
 	Task<HotelDto?> UpdateOwnedHotelAsync(int hotelId, int ownerId, UpdateHotelDto dto, CancellationToken cancellationToken = default);
+	Task<HotelDto?> GetByIdWithLocationAsync(int id, CancellationToken cancellationToken = default);
 }

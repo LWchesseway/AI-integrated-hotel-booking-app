@@ -4,6 +4,8 @@ using DoAn.HotelParking.Core.Application.Interfaces.User;
 using DoAn.HotelParking.Presentation.Api.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace DoAn.HotelParking.Presentation.Api.Controllers.User;
 
@@ -31,21 +33,23 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("fcm-token")]
-public async Task<IActionResult> UpdateFcmToken([FromBody] UpdateFcmTokenDto dto)
-{
-    var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-    if (string.IsNullOrWhiteSpace(userIdClaim))
-        return Unauthorized();
+    public async Task<IActionResult> UpdateFcmToken([FromBody] UpdateFcmTokenDto dto)
+    {
+        var userIdClaim = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
 
-    var userId = int.Parse(userIdClaim);
+        var result = await _userService.UpdateFcmTokenAsync(userId, dto.Token);
 
-    var result = await _userService.UpdateFcmTokenAsync(userId, dto.Token);
+        if (!result)
+        {
+            return NotFound();
+        }
 
-    if (!result)
-        return NotFound();
-
-    return Ok(ApiResponse<string>.Ok("FCM token updated"));
-}
+        return Ok(ApiResponse<string>.Ok("FCM token updated"));
+    }
 
     [HttpGet("{id:int}")]
     [HasPermission("user.read")]

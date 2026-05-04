@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DoAn.HotelParking.Core.Application.DTOs.Base;
 using DoAn.HotelParking.Core.Application.DTOs.Statistics;
@@ -137,7 +138,7 @@ public class OwnerStatisticsController : ControllerBase
 
     private int GetCurrentUserId()
     {
-        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rawUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (!int.TryParse(rawUserId, out var userId))
         {
             throw new UnauthorizedAccessException("Unable to resolve current user from token.");

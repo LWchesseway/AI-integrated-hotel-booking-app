@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DoAn.HotelParking.Core.Application.DTOs.Base;
 using DoAn.HotelParking.Core.Application.DTOs.Recommendation;
@@ -55,7 +56,7 @@ public class RecommendationsController : ControllerBase
         [FromQuery] int topK = 10,
         CancellationToken cancellationToken = default)
     {
-        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rawUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (int.TryParse(rawUserId, out var userId))
         {
             var personalized = await _recommendationService.GetPersonalizedRecommendationsAsync(userId, topK, province, cancellationToken);
@@ -71,7 +72,7 @@ public class RecommendationsController : ControllerBase
 
     private int GetCurrentUserId()
     {
-        var rawUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var rawUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (!int.TryParse(rawUserId, out var userId))
         {
             throw new UnauthorizedAccessException("Unable to resolve current user from token.");

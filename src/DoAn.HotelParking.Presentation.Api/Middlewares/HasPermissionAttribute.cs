@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DoAn.HotelParking.Core.Application.DTOs.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
@@ -34,7 +35,7 @@ public sealed class HasPermissionAttribute : TypeFilterAttribute
                 return;
             }
 
-            var rawUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var rawUserId = user.FindFirstValue(JwtRegisteredClaimNames.Sub);
             if (!int.TryParse(rawUserId, out var userId))
             {
                 context.Result = BuildResult(401, "Unauthorized");
