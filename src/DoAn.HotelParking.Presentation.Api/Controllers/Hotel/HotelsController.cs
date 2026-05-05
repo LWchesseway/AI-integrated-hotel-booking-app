@@ -22,6 +22,13 @@ public class HotelsController : ControllerBase
     }
 
     
+    /// <summary>
+    /// Chuc nang: Lay danh sach khach san theo phan trang.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khach san.</returns>
     [HttpGet]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("hotel.read")]
@@ -34,7 +41,13 @@ public class HotelsController : ControllerBase
         return Ok(ApiPagedResponse<HotelDetailDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
-    // Get all hotels with pagination and province of that hotel
+    /// <summary>
+    /// Chuc nang: Lay danh sach khach san kem thong tin tinh/thanh.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khach san.</returns>
     [HttpGet("all-with-province")]
     [AllowAnonymous]
     public async Task<IActionResult> GetAllWithProvince(
@@ -47,6 +60,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiPagedResponse<HotelDetailDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin khach san theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san neu tim thay.</returns>
     [HttpGet("{id:int}")]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("hotel.read")]
@@ -61,7 +80,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(item));
     }
 
-    // Search hotel by  id and return location of that hotel
+    /// <summary>
+    /// Chuc nang: Lay khach san theo id kem thong tin dia diem.
+    /// </summary>
+    /// <param name="id">Dau vao: Id khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san kem dia diem.</returns>
     [HttpGet("{id:int}/with-location")]
     [AllowAnonymous]
     public async Task<IActionResult> GetHotelWithLocation(int id, CancellationToken cancellationToken = default)
@@ -75,6 +99,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(item));
     }
 
+    /// <summary>
+    /// Chuc nang: Tim khach san theo ten.
+    /// </summary>
+    /// <param name="hotelName">Dau vao: Ten khach san (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khach san phu hop.</returns>
     [HttpGet("search")]
     [AllowAnonymous]
     public async Task<IActionResult> SearchByName(
@@ -90,6 +120,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<HotelDetailDto>>.Ok(items));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach khach san theo tinh/thanh.
+    /// </summary>
+    /// <param name="province">Dau vao: Ten tinh/thanh (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khach san.</returns>
     [HttpGet("by-province")]
     [AllowAnonymous]
     public async Task<IActionResult> GetByProvince(
@@ -105,6 +141,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<HotelDetailDto>>.Ok(items));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi khach san (admin).
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san vua tao.</returns>
     [HttpPost]
     [Authorize(Roles = "Admin")]
     [HasPermission("hotel.manage")]
@@ -114,6 +156,13 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat khach san theo id (admin).
+    /// </summary>
+    /// <param name="id">Dau vao: Id khach san.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san sau cap nhat.</returns>
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin")]
     [HasPermission("hotel.manage")]
@@ -128,6 +177,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa khach san theo id (admin).
+    /// </summary>
+    /// <param name="id">Dau vao: Id khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
     [HasPermission("hotel.manage")]
@@ -142,6 +197,12 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<object>.Ok(null, "Deleted"));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi khach san cho owner dang dang nhap.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san vua tao.</returns>
     [HttpPost("owner")]
     [Authorize(Roles = "Owner")]
     [HasPermission("hotel.manage")]
@@ -152,6 +213,13 @@ public class HotelsController : ControllerBase
         return Ok(ApiResponse<HotelDto>.Ok(hotel, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat khach san cua owner dang dang nhap.
+    /// </summary>
+    /// <param name="id">Dau vao: Id khach san.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua khach san sau cap nhat.</returns>
     [HttpPut("owner/{id:int}")]
     [Authorize(Roles = "Owner")]
     [HasPermission("hotel.manage")]

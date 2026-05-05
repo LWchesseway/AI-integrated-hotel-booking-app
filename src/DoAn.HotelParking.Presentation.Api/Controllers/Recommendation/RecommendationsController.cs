@@ -19,6 +19,13 @@ public class RecommendationsController : ControllerBase
         _recommendationService = recommendationService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach khach san tuong tu theo hotelId.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san.</param>
+    /// <param name="topK">Dau vao: So luong goi y (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach goi y.</returns>
     [HttpGet("similar/{hotelId:int}")]
     public async Task<IActionResult> GetSimilarHotels(int hotelId, [FromQuery] int topK = 10, CancellationToken cancellationToken = default)
     {
@@ -26,6 +33,14 @@ public class RecommendationsController : ControllerBase
         return Ok(ApiResponse<RecommendationResponse>.Ok(result, "Recommendations retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Goi y khach san cho nguoi dung moi theo vi tri.
+    /// </summary>
+    /// <param name="province">Dau vao: Ten tinh/thanh (query).</param>
+    /// <param name="ward">Dau vao: Ten phuong/xa (query).</param>
+    /// <param name="topK">Dau vao: So luong goi y (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach goi y.</returns>
     [HttpGet("new-user")]
     public async Task<IActionResult> GetRecommendationsForNewUser(
         [FromQuery] string? province,
@@ -37,6 +52,13 @@ public class RecommendationsController : ControllerBase
         return Ok(ApiResponse<RecommendationResponse>.Ok(result, "Recommendations retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Goi y ca nhan hoa cho nguoi dung dang dang nhap.
+    /// </summary>
+    /// <param name="province">Dau vao: Ten tinh/thanh (query).</param>
+    /// <param name="topK">Dau vao: So luong goi y (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach goi y ca nhan hoa.</returns>
     [HttpGet("personalized")]
     [Authorize(Roles = "Customer")]
     public async Task<IActionResult> GetPersonalizedRecommendations(
@@ -49,6 +71,14 @@ public class RecommendationsController : ControllerBase
         return Ok(ApiResponse<RecommendationResponse>.Ok(result, "Recommendations retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Goi y thong minh (uu tien ca nhan hoa, fallback theo vi tri).
+    /// </summary>
+    /// <param name="province">Dau vao: Ten tinh/thanh (query).</param>
+    /// <param name="ward">Dau vao: Ten phuong/xa (query).</param>
+    /// <param name="topK">Dau vao: So luong goi y (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach goi y.</returns>
     [HttpGet("smart")]
     public async Task<IActionResult> GetSmartRecommendations(
         [FromQuery] string? province,

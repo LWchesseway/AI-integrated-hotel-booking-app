@@ -22,6 +22,11 @@ public class FavoritesController : ControllerBase
         _favoriteHotelService = favoriteHotelService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach khach san yeu thich cua nguoi dung.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khach san yeu thich.</returns>
     [HttpGet("my-favorites")]
     public async Task<IActionResult> GetMyFavorites(CancellationToken cancellationToken = default)
     {
@@ -30,6 +35,12 @@ public class FavoritesController : ControllerBase
         return Ok(ApiResponse<IEnumerable<HotelDto>>.Ok(favorites, "Favorites retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Kiem tra khach san co nam trong danh sach yeu thich.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua trang thai yeu thich.</returns>
     [HttpGet("{hotelId:int}/is-favorite")]
     public async Task<IActionResult> IsFavorite(int hotelId, CancellationToken cancellationToken = default)
     {
@@ -38,6 +49,12 @@ public class FavoritesController : ControllerBase
         return Ok(ApiResponse<FavoriteStatusDto>.Ok(new FavoriteStatusDto { IsFavorite = isFavorite }, "Favorite status retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Them/bo khach san khoi danh sach yeu thich.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua ket qua cap nhat yeu thich.</returns>
     [HttpPost("{hotelId:int}/toggle")]
     public async Task<IActionResult> ToggleFavorite(int hotelId, CancellationToken cancellationToken = default)
     {

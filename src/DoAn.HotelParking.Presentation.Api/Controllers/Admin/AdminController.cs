@@ -18,6 +18,12 @@ public class AdminController : ControllerBase
         _bookingService = bookingService;
     }
 
+    /// <summary>
+    /// Chuc nang: Admin ep hoan tat don dat phong theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua.</returns>
     [HttpPatch("{id:int}/force-complete")]
     [HasPermission("booking.force_complete")]
     public async Task<IActionResult> AdminForceCompleteBooking(int id, CancellationToken cancellationToken = default)

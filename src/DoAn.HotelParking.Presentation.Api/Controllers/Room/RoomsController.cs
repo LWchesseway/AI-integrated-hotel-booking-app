@@ -19,6 +19,13 @@ public class RoomsController : ControllerBase
         _roomService = service;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach phong theo phan trang.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach phong.</returns>
     [HttpGet]
     [HasPermission("room.read")]
     public async Task<IActionResult> GetAll(
@@ -30,7 +37,12 @@ public class RoomsController : ControllerBase
         return Ok(ApiPagedResponse<RoomDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
-    // Get all rooms by hotel id
+    /// <summary>
+    /// Chuc nang: Lay danh sach phong theo hotelId.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach phong.</returns>
     [HttpGet("by-hotel")]
     [AllowAnonymous]
     public async Task<IActionResult> GetByHotelId([FromQuery] int hotelId, CancellationToken cancellationToken = default)
@@ -44,6 +56,12 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<RoomDetailDto>>.Ok(items));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin phong theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id phong.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua phong neu tim thay.</returns>
     [HttpGet("{id:int}")]
     [HasPermission("room.read")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
@@ -57,6 +75,12 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<RoomDto>.Ok(item));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach phong theo roomTypeId.
+    /// </summary>
+    /// <param name="roomTypeId">Dau vao: Id loai phong (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach phong.</returns>
     [HttpGet("by-room-type")]
     [AllowAnonymous]
     public async Task<IActionResult> GetByRoomTypeId([FromQuery] int roomTypeId, CancellationToken cancellationToken = default)
@@ -70,6 +94,12 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<RoomDetailDto>>.Ok(items));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi phong.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao phong.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua phong vua tao.</returns>
     [HttpPost]
     [HasPermission("room.manage")]
     public async Task<IActionResult> Create([FromBody] CreateRoomDto dto, CancellationToken cancellationToken = default)
@@ -78,6 +108,13 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<RoomDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat phong theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id phong.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat phong.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua phong sau cap nhat.</returns>
     [HttpPut("{id:int}")]
     [HasPermission("room.manage")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateRoomDto dto, CancellationToken cancellationToken = default)
@@ -91,6 +128,12 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<RoomDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa phong theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id phong.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     [HasPermission("room.manage")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)

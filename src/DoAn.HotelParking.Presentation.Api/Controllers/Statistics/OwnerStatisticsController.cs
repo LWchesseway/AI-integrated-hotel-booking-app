@@ -22,6 +22,11 @@ public class OwnerStatisticsController : ControllerBase
         _statisticsService = statisticsService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong ke dashboard cho owner dang dang nhap.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua thong ke dashboard.</returns>
     [HttpGet("dashboard")]
     public async Task<IActionResult> GetDashboardStats(CancellationToken cancellationToken = default)
     {
@@ -30,6 +35,13 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<OwnerDashboardStatsDto>.Ok(stats, "Dashboard statistics retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay du lieu bieu do doanh thu trong khoang thoi gian.
+    /// </summary>
+    /// <param name="startDate">Dau vao: Ngay bat dau (query).</param>
+    /// <param name="endDate">Dau vao: Ngay ket thuc (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua du lieu doanh thu.</returns>
     [HttpGet("revenue")]
     public async Task<IActionResult> GetRevenueChart(
         [FromQuery] DateTime? startDate = null,
@@ -54,6 +66,12 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<RevenueChartDto>>.Ok(data, "Revenue chart retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach phong top theo doanh thu/dat phong.
+    /// </summary>
+    /// <param name="limit">Dau vao: So luong phong can lay (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach phong top.</returns>
     [HttpGet("top-rooms")]
     public async Task<IActionResult> GetTopRooms([FromQuery] int limit = 5, CancellationToken cancellationToken = default)
     {
@@ -68,6 +86,11 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<TopRoomDto>>.Ok(data, "Top rooms retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong ke khung gio cao diem.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach khung gio cao diem.</returns>
     [HttpGet("peak-hours")]
     public async Task<IActionResult> GetPeakHours(CancellationToken cancellationToken = default)
     {
@@ -76,6 +99,12 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<PeakHourDto>>.Ok(data, "Peak hours retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach booking sap toi trong khoang gio.
+    /// </summary>
+    /// <param name="hoursAhead">Dau vao: So gio sap toi (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach booking sap toi.</returns>
     [HttpGet("upcoming")]
     public async Task<IActionResult> GetUpcomingBookings([FromQuery] int hoursAhead = 3, CancellationToken cancellationToken = default)
     {
@@ -90,6 +119,14 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<UpcomingBookingDto>>.Ok(data, "Upcoming bookings retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Tong hop doanh thu theo ky va khoang thoi gian.
+    /// </summary>
+    /// <param name="periodType">Dau vao: Loai ky thong ke (query).</param>
+    /// <param name="startDate">Dau vao: Ngay bat dau (query).</param>
+    /// <param name="endDate">Dau vao: Ngay ket thuc (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua tong hop doanh thu.</returns>
     [HttpGet("revenue-summary")]
     public async Task<IActionResult> GetRevenueSummary(
         [FromQuery] RevenuePeriodType periodType = RevenuePeriodType.Daily,
@@ -113,6 +150,14 @@ public class OwnerStatisticsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<RevenueSummaryDto>>.Ok(data, "Revenue summary retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: So sanh doanh thu theo ky va khoang thoi gian.
+    /// </summary>
+    /// <param name="periodType">Dau vao: Loai ky thong ke (query).</param>
+    /// <param name="startDate">Dau vao: Ngay bat dau (query).</param>
+    /// <param name="endDate">Dau vao: Ngay ket thuc (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua thong tin so sanh doanh thu.</returns>
     [HttpGet("revenue-comparison")]
     public async Task<IActionResult> GetRevenueComparison(
         [FromQuery] RevenuePeriodType periodType = RevenuePeriodType.Monthly,

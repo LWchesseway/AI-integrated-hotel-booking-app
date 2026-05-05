@@ -20,6 +20,12 @@ public class HotelImagesController : ControllerBase
         _hotelImageService = hotelImageService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach anh khach san theo hotelId.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san (route).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach anh khach san.</returns>
     [HttpGet]
     [HasPermission("hotelimage.read")]
     public async Task<IActionResult> GetByHotelId(int hotelId, CancellationToken cancellationToken = default)
@@ -28,6 +34,13 @@ public class HotelImagesController : ControllerBase
         return Ok(ApiResponse<IEnumerable<HotelImageDto>>.Ok(items));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi anh khach san.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san (route).</param>
+    /// <param name="dto">Dau vao: Du lieu tao anh khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua anh khach san vua tao.</returns>
     [HttpPost]
     [HasPermission("hotelimage.manage")]
     public async Task<IActionResult> Create(
@@ -40,6 +53,13 @@ public class HotelImagesController : ControllerBase
         return Ok(ApiResponse<HotelImageDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Upload file anh khach san.
+    /// </summary>
+    /// <param name="hotelId">Dau vao: Id khach san (route).</param>
+    /// <param name="request">Dau vao: File anh va thong tin kem theo.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua anh khach san vua upload.</returns>
     [HttpPost("upload")]
     [HasPermission("hotelimage.manage")]
     public async Task<IActionResult> Upload(
@@ -66,6 +86,13 @@ public class HotelImagesController : ControllerBase
         return Ok(ApiResponse<HotelImageDto>.Ok(created, "Uploaded", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat anh khach san theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id anh khach san.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat anh khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua anh khach san sau cap nhat.</returns>
     [HttpPut("{id:int}")]
     [HasPermission("hotelimage.manage")]
     public async Task<IActionResult> Update(
@@ -82,6 +109,12 @@ public class HotelImagesController : ControllerBase
         return Ok(ApiResponse<HotelImageDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa anh khach san theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id anh khach san.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     [HasPermission("hotelimage.manage")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)

@@ -21,6 +21,13 @@ public class UsersController : ControllerBase
         _userService = service;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach nguoi dung theo phan trang.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach nguoi dung.</returns>
     [HttpGet]
     [HasPermission("user.read")]
     public async Task<IActionResult> GetAll(
@@ -32,6 +39,11 @@ public class UsersController : ControllerBase
         return Ok(ApiPagedResponse<UserDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat FCM token cho nguoi dung dang dang nhap.
+    /// </summary>
+    /// <param name="dto">Dau vao: Thong tin FCM token.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
     [HttpPost("fcm-token")]
     public async Task<IActionResult> UpdateFcmToken([FromBody] UpdateFcmTokenDto dto)
     {
@@ -51,6 +63,12 @@ public class UsersController : ControllerBase
         return Ok(ApiResponse<string>.Ok("FCM token updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin nguoi dung theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id nguoi dung.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua nguoi dung neu tim thay.</returns>
     [HttpGet("{id:int}")]
     [HasPermission("user.read")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
@@ -64,6 +82,12 @@ public class UsersController : ControllerBase
         return Ok(ApiResponse<UserDto>.Ok(item));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi nguoi dung.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao nguoi dung.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua nguoi dung vua tao.</returns>
     [HttpPost]
     [HasPermission("user.manage")]
     public async Task<IActionResult> Create([FromBody] CreateUserDto dto, CancellationToken cancellationToken = default)
@@ -72,6 +96,13 @@ public class UsersController : ControllerBase
         return Ok(ApiResponse<UserDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat nguoi dung theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id nguoi dung.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat nguoi dung.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua nguoi dung sau khi cap nhat.</returns>
     [HttpPut("{id:int}")]
     [HasPermission("user.manage")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDto dto, CancellationToken cancellationToken = default)
@@ -85,6 +116,12 @@ public class UsersController : ControllerBase
         return Ok(ApiResponse<UserDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa nguoi dung theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id nguoi dung.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     [HasPermission("user.manage")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)

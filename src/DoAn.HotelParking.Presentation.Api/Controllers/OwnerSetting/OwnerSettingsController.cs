@@ -21,6 +21,11 @@ public class OwnerSettingsController : ControllerBase
         _ownerSettingService = ownerSettingService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin cau hinh cua owner dang dang nhap.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua cau hinh owner.</returns>
     [HttpGet]
     [HasPermission("ownersetting.read")]
     public async Task<IActionResult> GetSettings(CancellationToken cancellationToken = default)
@@ -30,6 +35,12 @@ public class OwnerSettingsController : ControllerBase
         return Ok(ApiResponse<OwnerSettingResponseDto>.Ok(result, "Owner settings retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat cau hinh owner dang dang nhap.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu cap nhat cau hinh owner.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
     [HttpPut]
     [HasPermission("ownersetting.manage")]
     public async Task<IActionResult> UpdateSettings([FromBody] UpdateOwnerSettingDto dto, CancellationToken cancellationToken = default)
@@ -39,6 +50,12 @@ public class OwnerSettingsController : ControllerBase
         return Ok(ApiResponse<object>.Ok(null, "Owner settings updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat thong tin ngan hang cho owner dang dang nhap.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu cap nhat thong tin ngan hang.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
     [HttpPut("bank-info")]
     [HasPermission("ownersetting.manage")]
     public async Task<IActionResult> UpdateBankInfo([FromForm] UpdateBankInfoDto dto, CancellationToken cancellationToken = default)
@@ -48,6 +65,11 @@ public class OwnerSettingsController : ControllerBase
         return Ok(ApiResponse<object>.Ok(null, "Bank information updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Kiem tra tinh day du cua thong tin ngan hang.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua ket qua kiem tra.</returns>
     [HttpGet("bank-info/validate")]
     [HasPermission("ownersetting.read")]
     public async Task<IActionResult> ValidateBankInfo(CancellationToken cancellationToken = default)

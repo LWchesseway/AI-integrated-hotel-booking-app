@@ -18,6 +18,13 @@ public class RolesController : ControllerBase
         _roleService = service;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach vai tro theo phan trang.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach vai tro.</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromQuery] int pageIndex = 1,
@@ -28,6 +35,12 @@ public class RolesController : ControllerBase
         return Ok(ApiPagedResponse<RoleDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin vai tro theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id vai tro.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua vai tro neu tim thay.</returns>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
     {
@@ -40,6 +53,12 @@ public class RolesController : ControllerBase
         return Ok(ApiResponse<RoleDto>.Ok(item));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi vai tro.
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao vai tro.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua vai tro vua tao.</returns>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateRoleDto dto, CancellationToken cancellationToken = default)
     {
@@ -47,6 +66,13 @@ public class RolesController : ControllerBase
         return Ok(ApiResponse<RoleDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat vai tro theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id vai tro.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat vai tro.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua vai tro sau cap nhat.</returns>
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateRoleDto dto, CancellationToken cancellationToken = default)
     {
@@ -59,6 +85,12 @@ public class RolesController : ControllerBase
         return Ok(ApiResponse<RoleDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa vai tro theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id vai tro.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
     {

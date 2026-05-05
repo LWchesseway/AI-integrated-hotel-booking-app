@@ -21,6 +21,13 @@ public class BookingsController : ControllerBase
         _bookingService = service;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach booking theo phan trang.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach booking.</returns>
     [HttpGet]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("booking.read")]
@@ -33,6 +40,12 @@ public class BookingsController : ControllerBase
         return Ok(ApiPagedResponse<BookingDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay thong tin booking theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua booking neu tim thay.</returns>
     [HttpGet("{id:int}")]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("booking.read")]
@@ -47,6 +60,12 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDto>.Ok(item));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao moi booking (admin/owner).
+    /// </summary>
+    /// <param name="dto">Dau vao: Du lieu tao booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua booking vua tao.</returns>
     [HttpPost]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("booking.manage")]
@@ -56,6 +75,13 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDto>.Ok(created, "Created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat booking theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id booking.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua booking sau cap nhat.</returns>
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("booking.manage")]
@@ -70,6 +96,12 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDto>.Ok(updated, "Updated"));
     }
 
+    /// <summary>
+    /// Chuc nang: Xoa booking theo id.
+    /// </summary>
+    /// <param name="id">Dau vao: Id booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua xoa.</returns>
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin,Owner")]
     [HasPermission("booking.manage")]
@@ -84,6 +116,12 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<object>.Ok(null, "Deleted"));
     }
 
+    /// <summary>
+    /// Chuc nang: Tao yeu cau booking cho khach hang dang dang nhap.
+    /// </summary>
+    /// <param name="request">Dau vao: Thong tin yeu cau booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua booking vua tao.</returns>
     [HttpPost("request")]
     [Authorize(Roles = "Customer")]
     [HasPermission("booking.manage")]
@@ -96,6 +134,13 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDto>.Ok(booking, "Booking request created", 201));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay danh sach booking cua khach hang dang dang nhap.
+    /// </summary>
+    /// <param name="pageIndex">Dau vao: Chi so trang (query).</param>
+    /// <param name="pageSize">Dau vao: Kich thuoc trang (query).</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach booking cua khach hang.</returns>
     [HttpGet("my-bookings")]
     [Authorize(Roles = "Customer")]
     [HasPermission("booking.read")]
@@ -109,6 +154,13 @@ public class BookingsController : ControllerBase
         return Ok(ApiPagedResponse<BookingDto>.Ok(items, pageIndex, pageSize, totalCount));
     }
 
+    /// <summary>
+    /// Chuc nang: Huy booking cua khach hang dang dang nhap.
+    /// </summary>
+    /// <param name="id">Dau vao: Id booking.</param>
+    /// <param name="request">Dau vao: Ly do huy booking.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua booking sau khi huy.</returns>
     [HttpPost("{id:int}/cancel")]
     [Authorize(Roles = "Customer")]
     [HasPermission("booking.manage")]

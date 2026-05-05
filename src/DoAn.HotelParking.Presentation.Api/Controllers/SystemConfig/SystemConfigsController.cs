@@ -20,6 +20,11 @@ public class SystemConfigsController : ControllerBase
         _systemConfigService = systemConfigService;
     }
 
+    /// <summary>
+    /// Chuc nang: Lay tat ca cau hinh he thong.
+    /// </summary>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua danh sach cau hinh.</returns>
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
     {
@@ -27,6 +32,12 @@ public class SystemConfigsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<SystemConfigDto>>.Ok(configs, "System configs retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Lay cau hinh he thong theo key.
+    /// </summary>
+    /// <param name="key">Dau vao: Key cau hinh.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua cau hinh neu tim thay.</returns>
     [HttpGet("{key}")]
     public async Task<IActionResult> GetByKey(string key, CancellationToken cancellationToken = default)
     {
@@ -39,6 +50,13 @@ public class SystemConfigsController : ControllerBase
         return Ok(ApiResponse<SystemConfigDto>.Ok(config, "System config retrieved"));
     }
 
+    /// <summary>
+    /// Chuc nang: Cap nhat cau hinh he thong theo key.
+    /// </summary>
+    /// <param name="key">Dau vao: Key cau hinh.</param>
+    /// <param name="dto">Dau vao: Du lieu cap nhat cau hinh.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
     [HttpPut("{key}")]
     public async Task<IActionResult> Update(string key, [FromBody] UpdateSystemConfigDto dto, CancellationToken cancellationToken = default)
     {
