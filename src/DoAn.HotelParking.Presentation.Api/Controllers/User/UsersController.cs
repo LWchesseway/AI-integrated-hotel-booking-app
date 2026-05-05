@@ -3,7 +3,9 @@ using DoAn.HotelParking.Core.Application.DTOs.User;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
 using DoAn.HotelParking.Presentation.Api.Middlewares;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -67,6 +69,45 @@ public class UsersController : ControllerBase
         }
 
         return Ok(ApiResponse<string>.Ok("FCM token added"));
+    }
+
+    /// <summary>
+    /// Chuc nang: Cap nhat anh dai dien cho nguoi dung dang dang nhap.
+    /// </summary>
+    /// <param name="request">Dau vao: File anh dai dien.</param>
+    /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
+    /// <returns>Dau ra: IActionResult chua nguoi dung sau cap nhat.</returns>
+    [HttpPost("me/avatar")]
+    public async Task<IActionResult> UpdateAvatar(
+        [FromForm] UpdateUserAvatarRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (request.File is null || request.File.Length == 0)
+        {
+            throw new InvalidOperationException("File is required.");
+        }
+
+        var userIdClaim = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        await using var stream = request.File.OpenReadStream();
+        var updated = await _userService.UpdateAvatarAsync(
+            userId,
+            stream,
+            request.File.Length,
+            request.File.FileName,
+            request.File.ContentType,
+            cancellationToken);
+
+        if (updated is null)
+        {
+            return NotFound(ApiResponse<UserDto>.Fail("Not found", 404));
+        }
+
+        return Ok(ApiResponse<UserDto>.Ok(updated, "Avatar updated"));
     }
 
     /// <summary>
@@ -140,4 +181,10 @@ public class UsersController : ControllerBase
 
         return Ok(ApiResponse<object>.Ok(null, "Deleted"));
     }
+}
+
+public class UpdateUserAvatarRequest
+{
+    [Required]
+    public IFormFile File { get; set; } = null!;
 }

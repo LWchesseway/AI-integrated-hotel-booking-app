@@ -3,6 +3,7 @@ using BCrypt.Net;
 using DoAn.HotelParking.Core.Application.DTOs.User;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
 using DoAn.HotelParking.Core.Application.Interfaces.Auth;
+using DoAn.HotelParking.Core.Application.Interfaces.Storage;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
 using DoAn.HotelParking.Core.Domain.Entities.Auth;
 using DoAn.HotelParking.Core.Domain.Enums;
@@ -14,17 +15,20 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IFcmTokenRepository _fcmTokenRepository;
+    private readonly IObjectStorageService _objectStorageService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public UserService(
         IUserRepository userRepository,
         IFcmTokenRepository fcmTokenRepository,
+        IObjectStorageService objectStorageService,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
         _userRepository = userRepository;
         _fcmTokenRepository = fcmTokenRepository;
+        _objectStorageService = objectStorageService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -126,6 +130,36 @@ public class UserService : IUserService
         return _mapper.Map<UserDto>(entity);
     }
 
+    public async Task<UserDto?> UpdateAvatarAsync(
+        int userId,
+        Stream stream,
+        long fileSize,
+        string fileName,
+        string contentType,
+        CancellationToken cancellationToken = default)
+    {
+        var entity = await _userRepository.GetByIdAsync(userId, cancellationToken);
+        if (entity is null)
+        {
+            return default;
+        }
+
+        var objectKey = BuildObjectKey(userId, fileName);
+        var avatarUrl = await _objectStorageService.UploadAsync(
+            stream,
+            fileSize,
+            objectKey,
+            contentType,
+            cancellationToken);
+
+        entity.AvatarUrl = avatarUrl;
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        _userRepository.Update(entity);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<UserDto>(entity);
+    }
+
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var entity = await _userRepository.GetByIdAsync(id, cancellationToken);
@@ -137,5 +171,13 @@ public class UserService : IUserService
         _userRepository.Remove(entity);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    private static string BuildObjectKey(int userId, string fileName)
+    {
+        var safeFileName = string.Concat(Path.GetFileName(fileName)
+            .Select(ch => char.IsLetterOrDigit(ch) || ch is '.' or '-' or '_' ? ch : '-'));
+
+        return $"users/{userId}/{Guid.NewGuid():N}-{safeFileName}";
     }
 }

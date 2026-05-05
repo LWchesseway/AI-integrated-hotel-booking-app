@@ -57,6 +57,7 @@ public class OwnerSettingsController : ControllerBase
     /// <param name="cancellationToken">Dau vao: Token huy yeu cau neu can.</param>
     /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
     [HttpPut("bank-info")]
+    [HttpPost("bank-info")]
     [HasPermission("ownersetting.manage")]
     public async Task<IActionResult> UpdateBankInfo([FromForm] UpdateBankInfoDto dto, CancellationToken cancellationToken = default)
     {
