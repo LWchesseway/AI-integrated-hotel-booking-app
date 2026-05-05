@@ -6,7 +6,7 @@ public interface IUserService
 {
 	Task<IEnumerable<UserDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-	Task<bool> UpdateFcmTokenAsync(int userId, string token);
+	Task<bool> AddFcmTokenForUserAsync(int userId, string token);
 	Task<(IEnumerable<UserDto> Items, int TotalCount)> GetPagedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default);
 	Task<UserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 	Task<UserDto> CreateAsync(CreateUserDto dto, CancellationToken cancellationToken = default);

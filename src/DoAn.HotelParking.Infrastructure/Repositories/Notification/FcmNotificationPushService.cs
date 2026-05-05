@@ -25,13 +25,13 @@ public class FcmNotificationPushService : INotificationPushService
 
     public async Task PushToUserAsync(NotificationPushPayload payload, CancellationToken cancellationToken = default)
     {
-        var token = await _context.Users
+        var tokens = await _context.FcmTokens
             .AsNoTracking()
-            .Where(u => u.Id == payload.UserId)
-            .Select(u => u.FcmToken)
-            .FirstOrDefaultAsync(cancellationToken);
+            .Where(t => t.UserId == payload.UserId)
+            .Select(t => t.Token)
+            .ToListAsync(cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(token))
+        if (tokens.Count == 0)
         {
             _logger.LogDebug("Skip FCM push because user {UserId} has no token.", payload.UserId);
             return;
@@ -39,63 +39,74 @@ public class FcmNotificationPushService : INotificationPushService
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var message = new Message
+        foreach (var token in tokens)
         {
-            Token = token,
-            Notification = new FirebaseAdmin.Messaging.Notification
+            if (string.IsNullOrWhiteSpace(token))
             {
-                Title = string.IsNullOrWhiteSpace(payload.Title) ? "Hotel Parking" : payload.Title,
-                Body = payload.Message ?? string.Empty
-            },
-            Data = new Dictionary<string, string>
-            {
-                ["notificationId"] = payload.NotificationId.ToString(),
-                ["userId"] = payload.UserId.ToString(),
-                ["title"] = payload.Title ?? string.Empty,
-                ["message"] = payload.Message ?? string.Empty,
-                ["type"] = payload.Type.ToString(),
-                ["relatedTable"] = payload.RelatedTable ?? string.Empty,
-                ["relatedId"] = payload.RelatedId?.ToString() ?? string.Empty,
-                ["createdAt"] = payload.CreatedAt.ToString("O")
+                continue;
             }
-        };
 
-        try
-        {
-            var messageId = await FirebaseMessaging.GetMessaging(_firebaseApp).SendAsync(message);
-            _logger.LogInformation(
-                "FCM push sent for notification {NotificationId} to user {UserId}. MessageId: {MessageId}",
-                payload.NotificationId,
-                payload.UserId,
-                messageId);
-        }
-        catch (FirebaseMessagingException ex) when (ShouldClearToken(ex))
-        {
-            _logger.LogWarning(
-                ex,
-                "FCM token of user {UserId} is invalid/unregistered. Token will be cleared.",
-                payload.UserId);
+            var message = new Message
+            {
+                Token = token,
+                Notification = new FirebaseAdmin.Messaging.Notification
+                {
+                    Title = string.IsNullOrWhiteSpace(payload.Title) ? "Hotel Parking" : payload.Title,
+                    Body = payload.Message ?? string.Empty
+                },
+                Data = new Dictionary<string, string>
+                {
+                    ["notificationId"] = payload.NotificationId.ToString(),
+                    ["userId"] = payload.UserId.ToString(),
+                    ["title"] = payload.Title ?? string.Empty,
+                    ["message"] = payload.Message ?? string.Empty,
+                    ["type"] = payload.Type.ToString(),
+                    ["relatedTable"] = payload.RelatedTable ?? string.Empty,
+                    ["relatedId"] = payload.RelatedId?.ToString() ?? string.Empty,
+                    ["createdAt"] = payload.CreatedAt.ToString("O")
+                }
+            };
 
-            await ClearTokenAsync(payload.UserId, cancellationToken);
+            try
+            {
+                var messageId = await FirebaseMessaging.GetMessaging(_firebaseApp).SendAsync(message);
+                _logger.LogInformation(
+                    "FCM push sent for notification {NotificationId} to user {UserId}. MessageId: {MessageId}",
+                    payload.NotificationId,
+                    payload.UserId,
+                    messageId);
+            }
+            catch (FirebaseMessagingException ex) when (ShouldRemoveToken(ex))
+            {
+                _logger.LogWarning(
+                    ex,
+                    "FCM token of user {UserId} is invalid/unregistered. Token will be removed.",
+                    payload.UserId);
+
+                await RemoveTokenAsync(token, cancellationToken);
+            }
         }
     }
 
-    private static bool ShouldClearToken(FirebaseMessagingException ex)
+    private static bool ShouldRemoveToken(FirebaseMessagingException ex)
     {
         return ex.MessagingErrorCode is MessagingErrorCode.InvalidArgument or MessagingErrorCode.Unregistered;
     }
 
-    private async Task ClearTokenAsync(int userId, CancellationToken cancellationToken)
+    private async Task RemoveTokenAsync(string token, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-        if (user is null || string.IsNullOrWhiteSpace(user.FcmToken))
+        if (string.IsNullOrWhiteSpace(token))
         {
             return;
         }
 
-        user.FcmToken = null;
-        user.FcmTokenUpdatedAt = DateTime.UtcNow;
+        var entity = await _context.FcmTokens.FirstOrDefaultAsync(t => t.Token == token, cancellationToken);
+        if (entity is null)
+        {
+            return;
+        }
 
+        _context.FcmTokens.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

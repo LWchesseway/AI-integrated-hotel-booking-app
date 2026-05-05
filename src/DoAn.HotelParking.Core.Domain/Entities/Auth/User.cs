@@ -14,8 +14,6 @@ public class User
     public string? Phone { get; set; }
     public string? Password { get; set; }
     public string? AvatarUrl { get; set; }
-    public string? FcmToken { get; set; }
-    public DateTime? FcmTokenUpdatedAt { get; set; }
     public UserStatus Status { get; set; }
     public bool IsDeleted { get; set; }
     public int? DeletedBy { get; set; }
@@ -28,6 +26,7 @@ public class User
     public ICollection<UserRole> UserRoles { get; set; } = new HashSet<UserRole>();
     
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new HashSet<RefreshToken>();
+    public ICollection<FcmToken> FcmTokens { get; set; } = new HashSet<FcmToken>();
     public ICollection<HotelEntity> OwnedHotels { get; set; } = new HashSet<HotelEntity>();
     public ICollection<FavoriteHotelEntity> FavoriteHotels { get; set; } = new HashSet<FavoriteHotelEntity>();
     public ICollection<OwnerSettingEntity> OwnerSettings { get; set; } = new HashSet<OwnerSettingEntity>();

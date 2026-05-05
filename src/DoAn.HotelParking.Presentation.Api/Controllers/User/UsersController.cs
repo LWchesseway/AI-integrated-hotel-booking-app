@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace DoAn.HotelParking.Presentation.Api.Controllers.User;
 
 [Route("api/users")]
-[Authorize(Roles = "Admin")]
+[Authorize]
 [ApiController]
 public class UsersController : ControllerBase
 {
@@ -44,23 +44,29 @@ public class UsersController : ControllerBase
     /// </summary>
     /// <param name="dto">Dau vao: Thong tin FCM token.</param>
     /// <returns>Dau ra: IActionResult thong bao ket qua cap nhat.</returns>
+    [HttpPost("addtokenforuser")]
     [HttpPost("fcm-token")]
-    public async Task<IActionResult> UpdateFcmToken([FromBody] UpdateFcmTokenDto dto)
+    public async Task<IActionResult> AddTokenForUser([FromBody] UpdateFcmTokenDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Token))
+        {
+            return BadRequest(ApiResponse<string>.Fail("Token is required", 400));
+        }
+
         var userIdClaim = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized();
         }
 
-        var result = await _userService.UpdateFcmTokenAsync(userId, dto.Token);
+        var result = await _userService.AddFcmTokenForUserAsync(userId, dto.Token);
 
         if (!result)
         {
             return NotFound();
         }
 
-        return Ok(ApiResponse<string>.Ok("FCM token updated"));
+        return Ok(ApiResponse<string>.Ok("FCM token added"));
     }
 
     /// <summary>

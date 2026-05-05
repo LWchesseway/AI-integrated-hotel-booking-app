@@ -2,7 +2,9 @@ using AutoMapper;
 using BCrypt.Net;
 using DoAn.HotelParking.Core.Application.DTOs.User;
 using DoAn.HotelParking.Core.Application.Interfaces.Base;
+using DoAn.HotelParking.Core.Application.Interfaces.Auth;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
+using DoAn.HotelParking.Core.Domain.Entities.Auth;
 using DoAn.HotelParking.Core.Domain.Enums;
 using UserEntity = DoAn.HotelParking.Core.Domain.Entities.Auth.User;
 
@@ -11,15 +13,18 @@ namespace DoAn.HotelParking.Core.Application.Services.User;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IFcmTokenRepository _fcmTokenRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
     public UserService(
         IUserRepository userRepository,
+        IFcmTokenRepository fcmTokenRepository,
         IUnitOfWork unitOfWork,
         IMapper mapper)
     {
         _userRepository = userRepository;
+        _fcmTokenRepository = fcmTokenRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
@@ -31,18 +36,45 @@ public class UserService : IUserService
     }
 
 
-    public async Task<bool> UpdateFcmTokenAsync(int userId, string token)
-{
+    public async Task<bool> AddFcmTokenForUserAsync(int userId, string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        token = token.Trim();
+
         var user = await _userRepository.GetByIdAsync(userId);
+        if (user is null)
+        {
+            return false;
+        }
 
-    if (user == null) return false;
+        var existing = await _fcmTokenRepository.GetByTokenAsync(token);
+        if (existing is not null)
+        {
+            if (existing.UserId != userId)
+            {
+                existing.UserId = userId;
+            }
 
-    user.FcmToken = token;
-    user.FcmTokenUpdatedAt = DateTime.UtcNow;
+            existing.UpdatedAt = DateTime.UtcNow;
+            _fcmTokenRepository.Update(existing);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
 
-    await _unitOfWork.SaveChangesAsync();
-    return true;
-}
+        var entity = new FcmToken
+        {
+            UserId = userId,
+            Token = token
+        };
+
+        await _fcmTokenRepository.AddAsync(entity);
+        await _unitOfWork.SaveChangesAsync();
+        return true;
+    }
     public async Task<(IEnumerable<UserDto> Items, int TotalCount)> GetPagedAsync(
         int pageIndex,
         int pageSize,

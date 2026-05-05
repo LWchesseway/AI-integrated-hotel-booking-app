@@ -19,7 +19,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.Property(e => e.Phone).HasMaxLength(15).IsUnicode(false);
         entity.Property(e => e.Password).HasMaxLength(255).IsUnicode(false);
         entity.Property(e => e.AvatarUrl).IsUnicode(false);
-        entity.Property(e => e.FcmToken).HasMaxLength(512).IsUnicode(false);
         entity.Property(e => e.Status).HasConversion<byte>();
         entity.Property(e => e.IsDeleted).HasDefaultValue(false);
         entity.Property(e => e.CreatedAt).HasDefaultValueSql("SYSUTCDATETIME()");

@@ -101,6 +101,7 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IFcmTokenRepository, FcmTokenRepository>();
 
         services.AddScoped<IHotelRepository, HotelRepository>();
         services.AddScoped<IFavoriteHotelRepository, FavoriteHotelRepository>();
