@@ -47,7 +47,7 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
         return (items, totalCount);
     }
 
-    
+
 
     public async Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Hotel.Hotel>> GetByProvinceWithLocationAsync(
         string province,
@@ -123,14 +123,14 @@ public class HotelRepository : GenericRepository<DoAn.HotelParking.Core.Domain.E
 
     public Task<Core.Domain.Entities.Hotel.Hotel?> GetByIdWithLocationAsync(int id, CancellationToken cancellationToken = default)
     {
-        if (id == 0)        {
+        if (id == 0)
+        {
             return Task.FromResult<Core.Domain.Entities.Hotel.Hotel?>(null);
         }
-        var query = new Core.Domain.Entities.Hotel.Hotel[] { }.AsQueryable();
+        var query = Context.Hotels.AsNoTracking();
         query = query.Where(h => h.Id == id && !h.IsDeleted)
             .Include(h => h.Ward)
                 .ThenInclude(w => w.Province);
         return query.FirstOrDefaultAsync(cancellationToken);
-        
     }
 }
