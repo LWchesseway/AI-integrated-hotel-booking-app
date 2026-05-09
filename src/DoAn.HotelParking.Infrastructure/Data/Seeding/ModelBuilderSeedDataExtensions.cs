@@ -1,6 +1,10 @@
 using DoAn.HotelParking.Core.Domain.Entities.Auth;
+using DoAn.HotelParking.Core.Domain.Entities.Booking;
 using DoAn.HotelParking.Core.Domain.Entities.Hotel;
+using DoAn.HotelParking.Core.Domain.Entities.OwnerSetting;
+using DoAn.HotelParking.Core.Domain.Entities.Review;
 using DoAn.HotelParking.Core.Domain.Entities.System;
+using DoAn.HotelParking.Core.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoAn.HotelParking.Infrastructure.Data.Seeding;
@@ -102,6 +106,8 @@ public static class ModelBuilderSeedDataExtensions
             new RolePermission { RoleId = 1, PermissionId = 28, CreatedAt = seededAt },
             new RolePermission { RoleId = 1, PermissionId = 29, CreatedAt = seededAt },
 
+            new RolePermission { RoleId = 2, PermissionId = 1, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 2, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 3, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 4, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 5, CreatedAt = seededAt },
@@ -109,29 +115,54 @@ public static class ModelBuilderSeedDataExtensions
             new RolePermission { RoleId = 2, PermissionId = 7, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 8, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 9, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 10, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 11, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 12, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 13, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 14, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 15, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 16, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 17, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 18, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 19, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 20, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 21, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 22, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 23, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 24, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 25, CreatedAt = seededAt },
             new RolePermission { RoleId = 2, PermissionId = 26, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 27, CreatedAt = seededAt },
+            new RolePermission { RoleId = 2, PermissionId = 28, CreatedAt = seededAt },
 
+
+            new RolePermission { RoleId = 3, PermissionId = 1, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 2, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 3, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 4, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 5, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 6, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 7, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 8, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 9, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 10, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 11, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 12, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 13, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 14, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 15, CreatedAt = seededAt },
             new RolePermission { RoleId = 3, PermissionId = 16, CreatedAt = seededAt },
-            new RolePermission { RoleId = 3, PermissionId = 18, CreatedAt = seededAt },
-            new RolePermission { RoleId = 3, PermissionId = 28, CreatedAt = seededAt });
+            new RolePermission { RoleId = 3, PermissionId = 20, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 21, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 22, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 23, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 24, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 25, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 26, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 27, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 28, CreatedAt = seededAt },
+            new RolePermission { RoleId = 3, PermissionId = 29, CreatedAt = seededAt });
+
 
         modelBuilder.Entity<RoomType>().HasData(
             new RoomType { Id = 1, Name = "Standard", Description = "Standard room" },
@@ -165,5 +196,10 @@ public static class ModelBuilderSeedDataExtensions
                 Description = "Enable reviews and ratings",
                 UpdatedAt = seededAt
             });
+
+        var baseDate = new DateTime(2026, 5, 1, 0, 0, 0, DateTimeKind.Utc);
+
+       
+
     }
 }

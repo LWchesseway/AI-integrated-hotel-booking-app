@@ -12,7 +12,6 @@ namespace DoAn.HotelParking.Presentation.Api.Controllers.Hotel;
 [ApiController]
 [Route("api/favorites")]
 [Authorize(Roles = "Customer")]
-[HasPermission("favorite.manage")]
 public class FavoritesController : ControllerBase
 {
     private readonly IFavoriteHotelService _favoriteHotelService;

@@ -19,6 +19,5 @@ dotnet run --project src\DoAn.HotelParking.Presentation.Api
 
 
 Kiểm tra MinIO:
-- API MinIO: http://localhost:9000/minio/health/live
-- Console MinIO: http://localhost:9001
+- API MinIO: http://localhost:9001
 - User/Pass mặc định: minioadmin / minioadmin

@@ -124,7 +124,6 @@ public class BookingsController : ControllerBase
     /// <returns>Dau ra: IActionResult chua booking vua tao.</returns>
     [HttpPost("request")]
     [Authorize(Roles = "Customer")]
-    [HasPermission("booking.manage")]
     public async Task<IActionResult> CreateBookingRequest(
         [FromBody] CustomerCreateBookingRequestDto request,
         CancellationToken cancellationToken = default)
@@ -143,7 +142,6 @@ public class BookingsController : ControllerBase
     /// <returns>Dau ra: IActionResult chua danh sach booking cua khach hang.</returns>
     [HttpGet("my-bookings")]
     [Authorize(Roles = "Customer")]
-    [HasPermission("booking.read")]
     public async Task<IActionResult> GetMyBookings(
         [FromQuery] int pageIndex = 1,
         [FromQuery] int pageSize = 20,
@@ -163,7 +161,6 @@ public class BookingsController : ControllerBase
     /// <returns>Dau ra: IActionResult chua booking sau khi huy.</returns>
     [HttpPost("{id:int}/cancel")]
     [Authorize(Roles = "Customer")]
-    [HasPermission("booking.manage")]
     public async Task<IActionResult> CancelMyBooking(
         int id,
         [FromBody] CancelBookingRequestDto request,
