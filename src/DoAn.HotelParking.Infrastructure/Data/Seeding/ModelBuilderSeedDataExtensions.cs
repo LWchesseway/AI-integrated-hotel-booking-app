@@ -168,36 +168,7 @@ public static class ModelBuilderSeedDataExtensions
             new RoomType { Id = 1, Name = "Standard", Description = "Standard room" },
             new RoomType { Id = 2, Name = "Deluxe", Description = "Deluxe room" });
 
-        modelBuilder.Entity<SystemConfig>().HasData(
-            new SystemConfig
-            {
-                Id = 1,
-                ConfigKey = "DEFAULT_DEPOSIT_RATE",
-                ConfigValue = "0.30",
-                DataType = "decimal",
-                Description = "Default booking deposit rate",
-                UpdatedAt = seededAt
-            },
-            new SystemConfig
-            {
-                Id = 2,
-                ConfigKey = "MIN_BOOKING_NOTICE_HOURS",
-                ConfigValue = "2",
-                DataType = "int",
-                Description = "Minimum hours before check-in to allow booking",
-                UpdatedAt = seededAt
-            },
-            new SystemConfig
-            {
-                Id = 3,
-                ConfigKey = "ENABLE_REVIEW_SYSTEM",
-                ConfigValue = "true",
-                DataType = "boolean",
-                Description = "Enable reviews and ratings",
-                UpdatedAt = seededAt
-            });
-
-        var baseDate = new DateTime(2026, 5, 1, 0, 0, 0, DateTimeKind.Utc);
+        
 
        
 
