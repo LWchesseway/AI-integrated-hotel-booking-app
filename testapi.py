@@ -59,7 +59,7 @@ def search_hotels(page_index: int, page_size: int) -> str:
 def search_hotelsbyname(hotelName: str) -> str:
     """Tìm kiếm khách sạn theo tên của khách sạn.
     Args:
-        hotelName (str): Tên khách sạn cần tìm
+        hotelName (str): Tên khách sạn cần tìm.Ví dụ: "Khách sạn Mường Thanh"
     Returns:
         Danh sách các khách sạn phù hợp bao gồm tên, địa chỉ, số điện thoại và đánh giá.
         Nếu không tìm thấy khách sạn nào, trả về thông báo phù hợp.
@@ -100,7 +100,7 @@ def search_hotelsbyname(hotelName: str) -> str:
 def search_hotelsbyprovince(province: str) -> str:
     """Tìm kiếm khách sạn theo tỉnh/thành phố.
     Args:
-        province (str): Truyền vào tên tỉnh/thành phố cần tìm kiếm khách sạn
+        province (str): Truyền vào tên tỉnh/thành phố cần tìm kiếm khách sạn.Ví dụ: "Hà Nội", "Hồ Chí Minh", "Đà Nẵng",...
     Returns:
         Danh sách các khách sạn phù hợp bao gồm tên, địa chỉ, số điện thoại và đánh giá.
         Nếu không tìm thấy khách sạn nào, trả về thông báo phù hợp.

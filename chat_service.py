@@ -79,7 +79,7 @@ def ensure_thread_belongs_to_user(
 
 
 def delete_agent_thread_memory(conn: sqlite3.Connection, thread_id: str) -> None:
-    for table in ("checkpoint_writes", "checkpoint_blobs", "checkpoints", "writes"):
+    for table in ("chat_messages", "chat_threads", "checkpoints", "writes", "hotel_contexts"):
         columns = {
             row["name"]
             for row in conn.execute(f"PRAGMA table_info({table})").fetchall()

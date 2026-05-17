@@ -65,22 +65,6 @@ class RefreshTokenRequest(BaseModel):
 def health() -> dict[str, str]:
     return {"status": "ok"}
 
-
-@router.post("/auth/register")
-def register(payload: RegisterRequest) -> dict:
-    return chat_service.post_auth_api("register", payload.model_dump(exclude_none=True))
-
-
-@router.post("/auth/login")
-def login(payload: LoginRequest) -> dict:
-    return chat_service.post_auth_api("login", payload.model_dump(exclude_none=True))
-
-
-@router.post("/auth/refresh-token")
-def refresh_token(payload: RefreshTokenRequest) -> dict:
-    return chat_service.post_auth_api("refresh-token", payload.model_dump())
-
-
 @router.post(
     "/threads",
     response_model=ThreadResponse,
