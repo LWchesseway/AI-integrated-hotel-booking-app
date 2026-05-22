@@ -1,0 +1,41 @@
+﻿using DoAn.HotelParking.Core.Application.Interfaces.Base;
+using DoAn.HotelParking.Core.Domain.Entities.Booking;
+
+namespace DoAn.HotelParking.Core.Application.Interfaces.Booking;
+
+public interface IBookingRepository : IGenericRepository<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>
+{
+	Task<bool> HasOverlappingBookingAsync(
+		int roomId,
+		DateTime checkInDate,
+		DateTime checkOutDate,
+		int? excludeBookingId = null,
+		CancellationToken cancellationToken = default);
+
+	Task<bool> HasOverlappingBookingByHotelAsync(
+		int hotelId,
+		DateTime checkInDate,
+		DateTime checkOutDate,
+		int? excludeBookingId = null,
+		CancellationToken cancellationToken = default);
+
+	Task<(IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking> Items, int TotalCount)> GetByCustomerIdPagedAsync(
+		int customerId,
+		int pageIndex,
+		int pageSize,
+		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetBookingsForOwnerAsync(
+		int ownerId,
+		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetUserBookingHistoryAsync(
+		int userId,
+		CancellationToken cancellationToken = default);
+
+	Task<IEnumerable<DoAn.HotelParking.Core.Domain.Entities.Booking.Booking>> GetActiveBookingsByHotelAsync(
+		int hotelId,
+		DateTime fromDate,
+		DateTime toDate,
+		CancellationToken cancellationToken = default);
+}
