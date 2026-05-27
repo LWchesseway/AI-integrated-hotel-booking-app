@@ -1,0 +1,97 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.iml
+*.ipr
+*.iws
+
+# Logs and temp
+*.log
+logs/
+*.tlog
+*.tmp
+*.temp
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# .NET build output
+**/bin/
+**/obj/
+**/out/
+**/publish/
+packages/
+*.nupkg
+*.snupkg
+[Tt]est[Rr]esult*/
+[Bb]enchmarkDotNet.Artifacts/
+
+# Local settings / secrets
+*.env
+.env
+.env.*
+secrets.json
+**/appsettings.Development.json
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/build/
+**/coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+**/flutter/ephemeral/
+.metadata
+flutter_app.iml
+app.*.symbols
+app.*.map.json
+
+# Android
+**/.gradle/
+**/local.properties
+**/key.properties
+**/*.keystore
+**/*.jks
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/.cxx/
+
+# iOS / macOS
+**/Pods/
+**/DerivedData/
+**/xcuserdata/
+**/*.xcuserstate
+**/Flutter/ephemeral/
+**/Flutter/App.framework
+**/Flutter/Flutter.framework
+**/Flutter/Flutter.podspec
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Runner/GeneratedPluginRegistrant.*
+
+# Windows build artifacts
+**/x64/
+**/x86/
+
+# Project-specific secrets / artifacts
+**/hotelapp-63196-firebase-adminsdk-fbsvc-a126f141e7.json
+repomix-output.xml

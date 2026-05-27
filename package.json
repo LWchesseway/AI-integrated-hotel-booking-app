@@ -1,0 +1,13 @@
+{
+  "name": "hotel-parking-scripts",
+  "version": "1.0.0",
+  "scripts": {
+    "be": "dotnet run --project Backend/src/DoAn.HotelParking.Presentation.Api/DoAn.HotelParking.Presentation.Api.csproj",
+    "fe": "cd Flutter_App-main && flutter run -d chrome",
+    "compose:up": "docker compose -f Backend/docker-compose.minio.yml up -d",
+    "compose:down": "docker compose -f Backend/docker-compose.minio.yml down",
+    "app:up": "npm run compose:up && npm run be && npm run fe",
+    "app:down": "npm run compose:down",
+    "app:without:docker": "npm run be && npm run fe"
+  }
+}
