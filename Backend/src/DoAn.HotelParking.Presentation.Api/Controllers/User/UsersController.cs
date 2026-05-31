@@ -188,3 +188,14 @@ public class UpdateUserAvatarRequest
     [Required]
     public IFormFile File { get; set; } = null!;
 }
+public class TestClass()
+{
+    public void Test2()
+    {
+        Console.WriteLine("Test");
+    }
+    public void Test3()
+    {
+        Console.WriteLine("Test");
+    }
+}
