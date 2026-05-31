@@ -1,0 +1,74 @@
+🏛️ Quy Trình Khởi Tạo Clean Architecture (.NET 10)
+Mở PowerShell tại thư mục dự án trống và thực hiện theo các nhóm lệnh sau:
+Bước 1: Tạo Solution và Các Project (Layer)
+Khởi tạo cấu trúc 4 tầng tách biệt theo đúng nguyên lý Clean Architecture.
+powershell
+# 1. Tạo file Solution (Quản lý chung)
+dotnet new sln -n DoAn.HotelParking
+
+# 2. Tạo các Project thành phần
+dotnet new classlib -n DoAn.HotelParking.Core.Domain -o DoAn.HotelParking.Core.Domain
+dotnet new classlib -n DoAn.HotelParking.Core.Application -o DoAn.HotelParking.Core.Application
+dotnet new classlib -n DoAn.HotelParking.Infrastructure -o DoAn.HotelParking.Infrastructure
+dotnet new webapi   -n DoAn.HotelParking.Presentation.Api -o DoAn.HotelParking.Presentation.Api
+
+# 3. Thêm tất cả Project vào Solution
+dotnet sln add (ls -r **/*.csproj)
+Hãy thận trọng khi sử dụng mã.
+
+Bước 2: Thiết Lập Mối Quan Hệ (Dependencies)
+Đảm bảo luồng phụ thuộc hướng vào tâm (Domain là lõi).
+powershell
+# Application phụ thuộc vào Domain
+dotnet add DoAn.HotelParking.Core.Application reference DoAn.HotelParking.Core.Domain
+
+# Infrastructure phụ thuộc vào Application và Domain
+dotnet add DoAn.HotelParking.Infrastructure reference DoAn.HotelParking.Core.Application
+dotnet add DoAn.HotelParking.Infrastructure reference DoAn.HotelParking.Core.Domain
+
+# Presentation (API) phụ thuộc vào Application và Infrastructure
+dotnet add DoAn.HotelParking.Presentation.Api reference DoAn.HotelParking.Core.Application
+dotnet add DoAn.HotelParking.Presentation.Api reference DoAn.HotelParking.Infrastructure
+Hãy thận trọng khi sử dụng mã.
+
+Bước 3: Cài Đặt Thư Viện (NuGet Packages)
+Cài đặt các gói EF Core và công cụ cần thiết cho từng tầng.
+powershell
+# Cho tầng Infrastructure (Database & Persistence)
+dotnet add DoAn.HotelParking.Infrastructure package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add DoAn.HotelParking.Infrastructure package Microsoft.EntityFrameworkCore.Design
+
+# Cho tầng Application (Dùng để đăng ký DI)
+dotnet add DoAn.HotelParking.Core.Application package Microsoft.Extensions.DependencyInjection.Abstractions
+
+# Cho tầng Presentation (Để thực thi Migrations)
+dotnet add DoAn.HotelParking.Presentation.Api package Microsoft.EntityFrameworkCore.Design
+
+# Cài đặt EF CLI Tool nội bộ (Local Tool)
+dotnet new tool-manifest
+dotnet tool install dotnet-ef --version 10.0.5
+Hãy thận trọng khi sử dụng mã.
+
+Bước 4: Thực Thi Migration & Tạo Database
+Sau khi đã viết xong code (DbContext, Entities, Configurations), chạy các lệnh sau để tạo DB trong SSMS.
+powershell
+# 1. Build thử toàn bộ Solution để kiểm tra lỗi code
+dotnet build
+
+# 2. Tạo bản Migration đầu tiên
+# Lưu ý: File migration sẽ được lưu vào thư mục Data/Migrations trong Infrastructure
+dotnet tool run dotnet-ef migrations add InitialCreate `
+    --project DoAn.HotelParking.Infrastructure `
+    --startup-project DoAn.HotelParking.Presentation.Api `
+    --output-dir Data/Migrations
+
+# 3. Cập nhật cấu hình vào Database (SSMS)
+dotnet tool run dotnet-ef database update `
+    --project DoAn.HotelParking.Infrastructure `
+    --startup-project DoAn.HotelParking.Presentation.Api
+Hãy thận trọng khi sử dụng mã.
+
+💡 Lưu ý quan trọng cho dự án của bạn:
+Thư mục Migration: Lệnh trên sử dụng --output-dir Data/Migrations để giữ cấu trúc dự án gọn gàng.
+Connection String: Đừng quên cấu hình chuỗi kết nối trong appsettings.json của dự án Presentation.Api trước khi chạy lệnh database update.
+Local Tool: Khi dùng dotnet tool run dotnet-ef, bạn không cần cài EF Core global trên máy, giúp các thành viên khác trong team chạy code ổn định hơn.
