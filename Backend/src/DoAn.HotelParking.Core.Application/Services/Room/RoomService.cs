@@ -82,14 +82,19 @@ public class RoomService : IRoomService
             return [];
         }
 
-        var hasBooking = await _bookingRepository.HasOverlappingBookingByHotelAsync(
+        var activeBookings = (await _bookingRepository.GetActiveBookingsByHotelAsync(
             hotelId,
             checkIn,
             checkOut,
-            null,
-            cancellationToken);
+            cancellationToken)).ToList();
 
-        var availableRooms = hasBooking ? [] : rooms;
+        var bookedRoomIds = activeBookings
+            .Where(b => checkIn < b.CheckOutDate && checkOut > b.CheckInDate)
+            .Select(b => b.RoomId)
+            .Distinct()
+            .ToList();
+
+        var availableRooms = rooms.Where(r => !bookedRoomIds.Contains(r.Id)).ToList();
 
         return _mapper.Map<IEnumerable<RoomDetailDto>>(availableRooms);
     }
@@ -125,14 +130,57 @@ public class RoomService : IRoomService
 
         for (var day = start; day <= end; day = day.AddDays(1))
         {
-            var hasBooking = activeBookings.Any(b => day < b.CheckOutDate && day.AddDays(1) > b.CheckInDate);
-            if (hasBooking)
+            var bookedRoomsCount = activeBookings
+                .Where(b => day < b.CheckOutDate && day.AddDays(1) > b.CheckInDate)
+                .Select(b => b.RoomId)
+                .Distinct()
+                .Count();
+
+            if (bookedRoomsCount >= activeRooms.Count)
             {
                 fullyBookedDates.Add(day);
             }
         }
 
         return fullyBookedDates;
+    }
+
+    public async Task<IEnumerable<DateTime>> GetBookedDatesByRoomIdAsync(
+        int roomId,
+        DateTime fromDate,
+        DateTime toDate,
+        CancellationToken cancellationToken = default)
+    {
+        var start = fromDate.Date;
+        var end = toDate.Date;
+        if (end < start)
+        {
+            throw new InvalidOperationException("toDate must be on or after fromDate.");
+        }
+
+        var room = await _roomRepository.GetByIdAsync(roomId, cancellationToken)
+            ?? throw new KeyNotFoundException("Room not found.");
+
+        var activeBookings = (await _bookingRepository.GetActiveBookingsByHotelAsync(
+            room.HotelId,
+            start,
+            end.AddDays(1),
+            cancellationToken))
+            .Where(b => b.RoomId == roomId)
+            .ToList();
+
+        var bookedDates = new List<DateTime>();
+
+        for (var day = start; day <= end; day = day.AddDays(1))
+        {
+            var hasBooking = activeBookings.Any(b => day < b.CheckOutDate && day.AddDays(1) > b.CheckInDate);
+            if (hasBooking)
+            {
+                bookedDates.Add(day);
+            }
+        }
+
+        return bookedDates;
     }
     public async Task<RoomDto> CreateAsync(CreateRoomDto dto, CancellationToken cancellationToken = default)
     {

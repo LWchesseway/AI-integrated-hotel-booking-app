@@ -217,12 +217,22 @@ class _OwnerBookingApprovalsScreenState
   Widget _buildActionButton({
     required String label,
     required Color color,
+    required IconData icon,
     required VoidCallback onPressed,
   }) {
     return SizedBox(
       height: 44,
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
         onPressed: _isSubmitting ? null : onPressed,
+        icon: Icon(icon, color: Colors.white, size: 16),
+        label: Text(
+          label,
+          style: GoogleFonts.dmSans(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           disabledBackgroundColor: color.withOpacity(0.45),
@@ -230,13 +240,6 @@ class _OwnerBookingApprovalsScreenState
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.dmSans(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );
@@ -327,7 +330,7 @@ class _OwnerBookingApprovalsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFB),
+      backgroundColor: const Color(0xFFF9F5F0),
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -343,28 +346,56 @@ class _OwnerBookingApprovalsScreenState
           style: GoogleFonts.playfairDisplay(
             color: Colors.white,
             fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        elevation: 0,
+        elevation: 2,
+        shadowColor: AppColors.greenPrimary.withOpacity(0.2),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             onPressed: _loadOwnerBookings,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorColor: Colors.amber,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: GoogleFonts.dmSans(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.tab,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.amber,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: AppColors.brownDark,
+              unselectedLabelColor: Colors.white.withOpacity(0.85),
+              labelStyle: GoogleFonts.dmSans(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+              unselectedLabelStyle: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+              tabs: _tabs.map((tab) => Tab(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  alignment: Alignment.center,
+                  child: Text(tab),
+                ),
+              )).toList(),
+            ),
           ),
-          tabs: _tabs.map((tab) => Tab(text: tab)).toList(),
         ),
       ),
       body: _isLoading
@@ -396,11 +427,13 @@ class _OwnerBookingApprovalsScreenState
                                     _buildActionButton(
                                       label: 'Xác nhận',
                                       color: Colors.green,
+                                      icon: Icons.check_circle_outline_rounded,
                                       onPressed: () => _updateBookingStatus(booking, 1),
                                     ),
                                     _buildActionButton(
                                       label: 'Từ chối',
                                       color: Colors.red,
+                                      icon: Icons.cancel_outlined,
                                       onPressed: () => _updateBookingStatus(booking, 2),
                                     ),
                                   ]

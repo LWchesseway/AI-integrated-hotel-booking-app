@@ -6,6 +6,8 @@ import 'dart:async';
 
 import '../../../../../injection.dart' as di;
 import '../../../../core/storage/auth_storage.dart';
+import '../../../../core/storage/chat_storage.dart';
+import '../../../../core/network/ai_api_client.dart';
 import '../bloc/home_bloc.dart';
 import '../../../search/presentation/screens/search_screen.dart';
 import '../../../notification/presentation/screens/notifications_screen.dart';
@@ -32,6 +34,13 @@ String _formatCurrency(double amount) {
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
         (m) => '${m[1]}.',
       );
+}
+
+class _ChatMessage {
+  final String role;
+  final String content;
+
+  const _ChatMessage({required this.role, required this.content});
 }
 
 class HomeScreen extends StatelessWidget {
@@ -62,6 +71,17 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   final BookingRepository _bookingRepository = di.sl<BookingRepository>();
   final HotelRepository _hotelRepository = di.sl<HotelRepository>();
   final AuthStorage _authStorage = AuthStorage();
+  final ChatStorage _chatStorage = ChatStorage();
+  static final AiApiClient _aiClient = AiApiClient();
+  TextEditingController? _chatInputController;
+  ScrollController? _chatScrollController;
+  List<_ChatMessage>? _chatMessages;
+  Offset? _chatButtonOffset;
+  bool _isChatOpen = false;
+  bool _isSendingMessage = false;
+  bool _isHistoryLoading = false;
+  bool _isHistoryLoaded = false;
+  String? _threadId;
 
   bool _isOwner = false;
   Future<_OwnerStats>? _ownerStatsFuture;
@@ -77,6 +97,8 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadOwnerContext();
+    _chatInputController = TextEditingController();
+    _chatScrollController = ScrollController();
   }
 
   @override
@@ -84,7 +106,426 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _bannerController.dispose();
+    _chatInputController?.dispose();
+    _chatScrollController?.dispose();
     super.dispose();
+  }
+
+  void _initChatButtonOffset(BoxConstraints constraints) {
+    if (_chatButtonOffset != null) return;
+    final initial = Offset(
+      constraints.maxWidth - 72,
+      constraints.maxHeight * 0.6,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        _chatButtonOffset = _clampChatOffset(initial, constraints);
+      });
+    });
+  }
+
+  Offset _clampChatOffset(Offset offset, BoxConstraints constraints) {
+    const size = 56.0;
+    final minX = 8.0;
+    final minY = 8.0;
+    final maxX = constraints.maxWidth - size - 8.0;
+    final maxY = constraints.maxHeight - size - 120.0;
+    return Offset(offset.dx.clamp(minX, maxX), offset.dy.clamp(minY, maxY));
+  }
+
+  List<_ChatMessage> get _messages => _chatMessages ??= <_ChatMessage>[];
+  TextEditingController get _chatInput =>
+      _chatInputController ??= TextEditingController();
+  ScrollController get _chatScroll =>
+      _chatScrollController ??= ScrollController();
+
+  Future<void> _persistThreadId(String threadId) async {
+    final session = await _authStorage.getSession();
+    final userId = session?.userId ?? 0;
+    if (userId <= 0) return;
+    await _chatStorage.saveLastThreadId(userId, threadId);
+  }
+
+  Future<String> _ensureThreadId(String accessToken) async {
+    if (_threadId != null && _threadId!.isNotEmpty) return _threadId!;
+    final response = await _aiClient.post(
+      '/threads',
+      accessToken: accessToken,
+      body: const {'title': 'Hoi thoai moi'},
+    );
+    final threadId = response['thread_id']?.toString();
+    if (threadId == null || threadId.isEmpty) {
+      throw const AiApiException('Missing thread id from AI', 500);
+    }
+    _threadId = threadId;
+    await _persistThreadId(threadId);
+    return threadId;
+  }
+
+  Future<void> _restoreChatHistory() async {
+    if (_isHistoryLoaded || _isHistoryLoading) return;
+
+    final token = await _authStorage.getAccessToken();
+    if (token == null || token.isEmpty) return;
+
+    setState(() {
+      _isHistoryLoading = true;
+    });
+
+    try {
+      final session = await _authStorage.getSession();
+      final userId = session?.userId ?? 0;
+      if (userId <= 0) return;
+
+      var threadId = await _chatStorage.getLastThreadId(userId);
+      if (threadId == null || threadId.isEmpty) {
+        final threadsResponse = await _aiClient.get(
+          '/threads',
+          accessToken: token,
+        );
+        final threadsData = threadsResponse['data'];
+        if (threadsData is List && threadsData.isNotEmpty) {
+          final first = threadsData.first as Map<String, dynamic>;
+          threadId = first['thread_id']?.toString();
+        }
+      }
+
+      if (threadId == null || threadId.isEmpty) return;
+
+      final messagesResponse = await _aiClient.get(
+        '/threads/$threadId/messages',
+        accessToken: token,
+      );
+      final messagesData = messagesResponse['data'];
+      if (messagesData is List) {
+        setState(() {
+          _threadId = threadId;
+          _messages
+            ..clear()
+            ..addAll(
+              messagesData.map((item) {
+                final map = item as Map<String, dynamic>;
+                return _ChatMessage(
+                  role: map['role']?.toString() ?? 'assistant',
+                  content: map['content']?.toString() ?? '',
+                );
+              }),
+            );
+        });
+        await _persistThreadId(threadId);
+      }
+    } catch (_) {
+      // Ignore history loading errors and let the user start a new chat.
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isHistoryLoading = false;
+        _isHistoryLoaded = true;
+      });
+    }
+  }
+
+  void _toggleChatOpen() {
+    final next = !_isChatOpen;
+    setState(() => _isChatOpen = next);
+    if (next) {
+      _restoreChatHistory();
+    }
+  }
+
+  Future<void> _sendChatMessage() async {
+    final raw = _chatInput.text.trim();
+    if (raw.isEmpty || _isSendingMessage) return;
+
+    final token = await _authStorage.getAccessToken();
+    if (token == null || token.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui long dang nhap de chat.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _messages.add(_ChatMessage(role: 'user', content: raw));
+      _chatInput.clear();
+      _isSendingMessage = true;
+    });
+    _scrollChatToBottom();
+
+    try {
+      final threadId = await _ensureThreadId(token);
+      final response = await _aiClient.post(
+        '/threads/$threadId/messages',
+        accessToken: token,
+        body: {'message': raw},
+      );
+      final message = response['message'] as Map<String, dynamic>?;
+      final content = message?['content']?.toString() ?? '';
+      if (content.isNotEmpty) {
+        setState(() {
+          _messages.add(_ChatMessage(role: 'assistant', content: content));
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.toString())));
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isSendingMessage = false;
+      });
+      _scrollChatToBottom();
+    }
+  }
+
+  void _scrollChatToBottom() {
+    if (!_chatScroll.hasClients) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_chatScroll.hasClients) return;
+      _chatScroll.animateTo(
+        _chatScroll.position.maxScrollExtent + 60,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  String _formatAssistantText(String content) {
+    var cleaned = content.replaceAll('**', '');
+    cleaned = cleaned.replaceAll('*', '');
+    cleaned = cleaned.replaceAll('\r', '');
+    return cleaned.trim();
+  }
+
+  Widget _buildChatBubble(_ChatMessage message) {
+    final isUser = message.role == 'user';
+    final bubbleColor = isUser ? _kGreen : Colors.white;
+    final textColor = isUser ? Colors.white : _kTextPrimary;
+    final alignment = isUser ? Alignment.centerRight : Alignment.centerLeft;
+    final displayText = isUser
+        ? message.content
+        : _formatAssistantText(message.content);
+
+    return Align(
+      alignment: alignment,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        constraints: const BoxConstraints(maxWidth: 300),
+        decoration: BoxDecoration(
+          color: bubbleColor,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Text(
+          displayText,
+          style: GoogleFonts.dmSans(
+            color: textColor,
+            fontSize: 13,
+            height: 1.35,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatBox(BoxConstraints constraints) {
+    final maxWidth = constraints.maxWidth - 24;
+    final width = maxWidth.clamp(300, 380).toDouble();
+    final height = (constraints.maxHeight * 0.7).clamp(360, 560).toDouble();
+
+    return Positioned(
+      right: 12,
+      bottom: 90,
+      child: IgnorePointer(
+        ignoring: !_isChatOpen,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: _isChatOpen ? 1 : 0,
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.18),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: _kGreen,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(18),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.auto_awesome, color: Colors.white),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Tro ly dat phong',
+                          style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() => _isChatOpen = false);
+                        },
+                        icon: const Icon(Icons.close, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: _isHistoryLoading && _messages.isEmpty
+                        ? Center(
+                            child: Text(
+                              'Dang tai lich su...',
+                              style: GoogleFonts.dmSans(
+                                color: _kTextSec,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: _chatScroll,
+                            itemCount:
+                                _messages.length + (_isSendingMessage ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index >= _messages.length) {
+                                return Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 6),
+                                    child: Text(
+                                      'Dang tra loi...',
+                                      style: GoogleFonts.dmSans(
+                                        color: _kTextSec,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return _buildChatBubble(_messages[index]);
+                            },
+                          ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _chatInput,
+                          minLines: 1,
+                          maxLines: 3,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) => _sendChatMessage(),
+                          decoration: InputDecoration(
+                            hintText: 'Nhap tin nhan...',
+                            hintStyle: GoogleFonts.dmSans(
+                              color: _kTextSec,
+                              fontSize: 13,
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF4F6F5),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: _isSendingMessage ? null : _sendChatMessage,
+                        icon: const Icon(Icons.send, color: _kGreen),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatButton(BoxConstraints constraints) {
+    _initChatButtonOffset(constraints);
+    final offset =
+        _chatButtonOffset ??
+        Offset(constraints.maxWidth - 72, constraints.maxHeight * 0.6);
+
+    return Positioned(
+      left: offset.dx,
+      top: offset.dy,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          final current = _chatButtonOffset ?? offset;
+          final next = current + details.delta;
+          setState(() {
+            _chatButtonOffset = _clampChatOffset(next, constraints);
+          });
+        },
+        onTap: _toggleChatOpen,
+        child: Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1E7F4D), Color(0xFF2FB66B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: const Icon(Icons.auto_awesome, color: Colors.white),
+        ),
+      ),
+    );
   }
 
   void _onScroll() {
@@ -226,88 +667,117 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                 ),
               );
             } else if (state is HomeLoaded) {
-              return SafeArea(
-                child: RefreshIndicator(
-                  color: _kGreen,
-                  onRefresh: () async {
-                    context.read<HomeBloc>().add(LoadHomeDataEvent());
-                  },
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      // 1. Header & Logo
-                      SliverToBoxAdapter(
-                        child: _buildHeader(context, state.fullName),
-                      ),
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return SafeArea(
+                    child: Stack(
+                      children: [
+                        RefreshIndicator(
+                          color: _kGreen,
+                          onRefresh: () async {
+                            context.read<HomeBloc>().add(LoadHomeDataEvent());
+                          },
+                          child: CustomScrollView(
+                            controller: _scrollController,
+                            physics: const BouncingScrollPhysics(),
+                            slivers: [
+                              // 1. Header & Logo
+                              SliverToBoxAdapter(
+                                child: _buildHeader(context, state.fullName),
+                              ),
 
-                      // 2. Thanh Tìm Kiếm
-                      SliverToBoxAdapter(child: _buildSearchBar(context)),
+                              // 2. Thanh Tim Kiem
+                              SliverToBoxAdapter(
+                                child: _buildSearchBar(context),
+                              ),
 
-                      if (_isOwner)
-                        SliverToBoxAdapter(child: _buildOwnerStatsCard()),
+                              if (_isOwner)
+                                SliverToBoxAdapter(
+                                  child: _buildOwnerStatsCard(),
+                                ),
 
-                      // 3. Banner Quảng cáo
-                      SliverToBoxAdapter(child: _buildPromoBanner()),
+                              // 3. Banner Quang cao
+                              SliverToBoxAdapter(child: _buildPromoBanner()),
 
-                      // 4. Danh sách Tỉnh/Thành phố
-                      SliverToBoxAdapter(
-                        child: _buildProvincesSection(context, state),
-                      ),
+                              // 4. Danh sach tinh/thanh pho
+                              SliverToBoxAdapter(
+                                child: _buildProvincesSection(context, state),
+                              ),
 
-                      // 5. Tiêu đề Khách sạn nổi bật
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                          child: Text(
-                            'Khách sạn dành cho bạn',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: _kTextPrimary,
-                            ),
+                              // 5. Tieu de khach san noi bat
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    24,
+                                    20,
+                                    16,
+                                  ),
+                                  child: Text(
+                                    'Khach san danh cho ban',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: _kTextPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // 6. Danh sach khach san
+                              SliverPadding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                sliver: SliverList(
+                                  key: const Key('hotel_list'),
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      if (index == state.hotels.length) {
+                                        return state.isFetchingMore
+                                            ? const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 20,
+                                                ),
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        color: _kGreen,
+                                                      ),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink();
+                                      }
+                                      final hotel = state.hotels[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 20,
+                                        ),
+                                        child: _HotelCard(
+                                          hotel: hotel,
+                                          index: index,
+                                        ),
+                                      );
+                                    },
+                                    childCount:
+                                        state.hotels.length +
+                                        (state.isFetchingMore ? 1 : 0),
+                                  ),
+                                ),
+                              ),
+
+                              const SliverToBoxAdapter(
+                                child: SizedBox(height: 30),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-
-                      // 6. Danh sách Khách sạn
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        sliver: SliverList(
-                          key: const Key('hotel_list'),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              if (index == state.hotels.length) {
-                                return state.isFetchingMore
-                                    ? const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 20,
-                                        ),
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: _kGreen,
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink();
-                              }
-                              final hotel = state.hotels[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: _HotelCard(hotel: hotel, index: index),
-                              );
-                            },
-                            childCount:
-                                state.hotels.length +
-                                (state.isFetchingMore ? 1 : 0),
-                          ),
-                        ),
-                      ),
-
-                      const SliverToBoxAdapter(child: SizedBox(height: 30)),
-                    ],
-                  ),
-                ),
+                        _buildChatBox(constraints),
+                        _buildChatButton(constraints),
+                      ],
+                    ),
+                  );
+                },
               );
             }
             return const SizedBox.shrink();
@@ -415,55 +885,124 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white,
+                  const Color(0xFFF3E5DC).withOpacity(0.3),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFE8E0D5).withOpacity(0.8)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
+                  color: const Color(0xFF4E342E).withOpacity(0.05),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Tổng quan quản lý',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: _kTextPrimary,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.dashboard_customize_rounded,
+                          color: _kGreen,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Tổng quan quản lý',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: _kTextPrimary,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _kGreen.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: _kGreen.withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'ĐỐI TÁC',
+                            style: GoogleFonts.dmSans(
+                              color: _kGreen,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Row(
                   children: [
                     Expanded(
                       child: _statItem(
+                        icon: Icons.hotel_class_rounded,
+                        iconColor: _kGreen,
+                        iconBgColor: _kGreen.withOpacity(0.12),
                         label: 'Khách sạn',
                         value: stats.totalHotels.toString(),
                       ),
                     ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: _statItem(
-                        label: 'Phòng đã đặt',
+                        icon: Icons.bookmark_added_rounded,
+                        iconColor: const Color(0xFFF57F17),
+                        iconBgColor: const Color(0xFFFFF3E0),
+                        label: 'Đã đặt',
                         value: stats.bookedRooms.toString(),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       child: _statItem(
+                        icon: Icons.workspace_premium_rounded,
+                        iconColor: const Color(0xFFFFB300),
+                        iconBgColor: const Color(0xFFFFF8E1),
                         label: 'VIP',
                         value: stats.vipBookedRooms.toString(),
                       ),
                     ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: _statItem(
+                        icon: Icons.king_bed_rounded,
+                        iconColor: const Color(0xFF8D6E63),
+                        iconBgColor: const Color(0xFFEFEBE9),
                         label: 'Thường',
                         value: stats.regularBookedRooms.toString(),
                       ),
@@ -494,21 +1033,60 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
     );
   }
 
-  Widget _statItem({required String label, required String value}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: GoogleFonts.dmSans(fontSize: 12, color: _kTextSec)),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: GoogleFonts.dmSans(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: _kTextPrimary,
+  Widget _statItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFDFAF6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE8E0D5).withOpacity(0.5)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
           ),
-        ),
-      ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: _kTextSec,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: _kTextPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

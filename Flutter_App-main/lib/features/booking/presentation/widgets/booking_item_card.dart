@@ -22,15 +22,15 @@ class BookingItemCard extends StatelessWidget {
   Color get _statusColor {
     switch (booking.status) {
       case 0:
-        return Colors.orange;
+        return AppColors.statusPending;
       case 1:
-        return Colors.green;
+        return AppColors.statusConfirmed;
       case 2:
-        return Colors.red;
+        return AppColors.statusCancelled;
       case 3:
-        return Colors.blue;
+        return AppColors.statusCompleted;
       default:
-        return Colors.grey;
+        return AppColors.brownLight;
     }
   }
 
@@ -44,13 +44,14 @@ class BookingItemCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.divider.withOpacity(0.6)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: AppColors.brownDark.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -91,19 +92,24 @@ class BookingItemCard extends StatelessWidget {
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
+                                horizontal: 10,
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _statusColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
+                                color: _statusColor.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: _statusColor.withOpacity(0.25),
+                                  width: 1,
+                                ),
                               ),
                               child: Text(
-                                booking.statusLabel,
+                                booking.statusLabel.toUpperCase(),
                                 style: GoogleFonts.dmSans(
                                   color: _statusColor,
-                                  fontSize: 10,
+                                  fontSize: 9,
                                   fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ),

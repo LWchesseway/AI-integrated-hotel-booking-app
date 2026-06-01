@@ -15,4 +15,5 @@ public interface IRoomService
 	Task<IEnumerable<RoomDetailDto>> GetByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default);
 	Task<IEnumerable<RoomDetailDto>> GetAvailableByHotelIdAsync(int hotelId, DateTime checkInDate, DateTime checkOutDate, CancellationToken cancellationToken = default);
 	Task<IEnumerable<DateTime>> GetFullyBookedDatesByHotelIdAsync(int hotelId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken = default);
+	Task<IEnumerable<DateTime>> GetBookedDatesByRoomIdAsync(int roomId, DateTime fromDate, DateTime toDate, CancellationToken cancellationToken = default);
 }

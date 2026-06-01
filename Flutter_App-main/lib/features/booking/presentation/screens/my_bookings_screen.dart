@@ -194,7 +194,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFB),
+      backgroundColor: const Color(0xFFF9F5F0),
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.light,
         flexibleSpace: Container(
@@ -211,28 +211,56 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
           style: GoogleFonts.playfairDisplay(
             color: Colors.white,
             fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        elevation: 0,
+        elevation: 2,
+        shadowColor: AppColors.greenPrimary.withOpacity(0.2),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
             onPressed: () => context.read<BookingBloc>().add(LoadMyBookingsEvent()),
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorColor: Colors.amber,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          labelStyle: GoogleFonts.dmSans(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.tab,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.amber,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: AppColors.brownDark,
+              unselectedLabelColor: Colors.white.withOpacity(0.85),
+              labelStyle: GoogleFonts.dmSans(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+              unselectedLabelStyle: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+              tabs: _tabs.map((tab) => Tab(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  alignment: Alignment.center,
+                  child: Text(tab),
+                ),
+              )).toList(),
+            ),
           ),
-          tabs: _tabs.map((tab) => Tab(text: tab)).toList(),
         ),
       ),
       body: BlocBuilder<BookingBloc, BookingState>(

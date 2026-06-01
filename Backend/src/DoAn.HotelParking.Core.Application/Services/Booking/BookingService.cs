@@ -219,15 +219,15 @@ public class BookingService : IBookingService
 
         var nightCount = (checkOutDate - checkInDate).Days;
 
-        var hasOverlap = await _bookingRepository.HasOverlappingBookingByHotelAsync(
-            room.HotelId,
+        var hasOverlap = await _bookingRepository.HasOverlappingBookingAsync(
+            dto.RoomId,
             checkInDate,
             checkOutDate,
             id,
             cancellationToken);
         if (hasOverlap)
         {
-            throw new InvalidOperationException("Hotel already has a booking for the selected dates.");
+            throw new InvalidOperationException("Room already has a booking for the selected dates.");
         }
 
         var unitPrice = await ResolveNightlyPriceAsync(dto.RoomId, checkInDate, checkOutDate, room.Price, cancellationToken);
@@ -347,15 +347,15 @@ public class BookingService : IBookingService
 
         var nightCount = (checkOut - checkIn).Days;
 
-        var hasOverlap = await _bookingRepository.HasOverlappingBookingByHotelAsync(
-            room.HotelId,
+        var hasOverlap = await _bookingRepository.HasOverlappingBookingAsync(
+            roomId,
             checkIn,
             checkOut,
             null,
             cancellationToken);
         if (hasOverlap)
         {
-            throw new InvalidOperationException("Hotel already has a booking for the selected dates.");
+            throw new InvalidOperationException("Room already has a booking for the selected dates.");
         }
 
         var unitPrice = await ResolveNightlyPriceAsync(roomId, checkIn, checkOut, room.Price, cancellationToken);

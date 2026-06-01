@@ -28,6 +28,10 @@ class _MainNavScreenState extends State<MainNavScreen> {
   bool _isOwner = false;
   bool _isSessionLoaded = false;
 
+  Key _favoritesRefreshKey = UniqueKey();
+  Key _bookingsRefreshKey = UniqueKey();
+  Key _approvalsRefreshKey = UniqueKey();
+
   @override
   void initState() {
     super.initState();
@@ -47,15 +51,18 @@ class _MainNavScreenState extends State<MainNavScreen> {
   @override
   Widget build(BuildContext context) {
     final screens = _isOwner
-        ? const <Widget>[
-            HomeScreen(),
-            OwnerBookingApprovalsScreen(),
-            ProfileScreen(),
+        ? <Widget>[
+            const HomeScreen(),
+            OwnerBookingApprovalsScreen(key: _approvalsRefreshKey),
+            const ProfileScreen(),
           ]
         : <Widget>[
             const HomeScreen(),
-            MyBookingsScreen(initialTabIndex: widget.initialBookingTab),
-            const FavoritesScreen(),
+            MyBookingsScreen(
+              key: _bookingsRefreshKey,
+              initialTabIndex: widget.initialBookingTab,
+            ),
+            FavoritesScreen(key: _favoritesRefreshKey),
             const ProfileScreen(),
           ];
 
@@ -121,7 +128,22 @@ class _MainNavScreenState extends State<MainNavScreen> {
         ),
         child: BottomNavigationBar(
           currentIndex: safeIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+              if (!_isOwner) {
+                if (index == 1) {
+                  _bookingsRefreshKey = UniqueKey();
+                } else if (index == 2) {
+                  _favoritesRefreshKey = UniqueKey();
+                }
+              } else {
+                if (index == 1) {
+                  _approvalsRefreshKey = UniqueKey();
+                }
+              }
+            });
+          },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           selectedItemColor: AppColors.greenPrimary,
