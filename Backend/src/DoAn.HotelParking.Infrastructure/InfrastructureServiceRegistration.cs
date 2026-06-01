@@ -16,6 +16,7 @@ using DoAn.HotelParking.Core.Application.Interfaces.TimeSlot;
 using DoAn.HotelParking.Core.Application.Interfaces.User;
 using DoAn.HotelParking.Infrastructure.Data;
 using DoAn.HotelParking.Infrastructure.Authentication;
+using DoAn.HotelParking.Infrastructure.Data.Seeding;
 using DoAn.HotelParking.Infrastructure.Notification;
 using DoAn.HotelParking.Infrastructure.Repositories.Base;
 using DoAn.HotelParking.Infrastructure.Repositories.Auth;
@@ -59,6 +60,7 @@ public static class InfrastructureServiceRegistration
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
         services.Configure<MinioSettings>(configuration.GetSection("Minio"));
         services.Configure<FirebaseSettings>(configuration.GetSection("Firebase"));
+        services.Configure<SeedDataOptions>(configuration.GetSection("SeedData"));
 
         services.AddSingleton(sp =>
         {

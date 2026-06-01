@@ -18,6 +18,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<LocationSeeder>();
+builder.Services.AddScoped<DevelopmentDataSeeder>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -120,6 +121,13 @@ using (var scope = app.Services.CreateScope())
     {
         var locationSeeder = scope.ServiceProvider.GetRequiredService<LocationSeeder>();
         await locationSeeder.SeedLocationsAsync();
+
+        var seedOptions = scope.ServiceProvider.GetRequiredService<IOptions<SeedDataOptions>>().Value;
+        if (seedOptions.Enabled && (app.Environment.IsDevelopment() || seedOptions.AllowInProduction))
+        {
+            var devSeeder = scope.ServiceProvider.GetRequiredService<DevelopmentDataSeeder>();
+            await devSeeder.SeedAsync();
+        }
     }
     catch (Exception ex)
     {
