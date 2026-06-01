@@ -45,5 +45,10 @@ abstract class BookingRepository {
     required DateTime fromDate,
     required DateTime toDate,
   });
+  Future<List<DateTime>> getBookedDatesByRoom(
+    int roomId, {
+    required DateTime fromDate,
+    required DateTime toDate,
+  });
   Future<List<TimeSlotEntity>> getTimeSlotsByRoom(int roomId);
 }

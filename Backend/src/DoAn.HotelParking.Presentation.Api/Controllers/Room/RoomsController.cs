@@ -90,6 +90,23 @@ public class RoomsController : ControllerBase
         return Ok(ApiResponse<IEnumerable<DateTime>>.Ok(items));
     }
 
+    [HttpGet("{roomId:int}/booked-dates")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetBookedDatesByRoomId(
+        int roomId,
+        [FromQuery] DateTime fromDate,
+        [FromQuery] DateTime toDate,
+        CancellationToken cancellationToken = default)
+    {
+        if (roomId <= 0)
+        {
+            return BadRequest(ApiResponse<IEnumerable<DateTime>>.Fail("roomId must be greater than 0.", 400));
+        }
+
+        var items = await _roomService.GetBookedDatesByRoomIdAsync(roomId, fromDate, toDate, cancellationToken);
+        return Ok(ApiResponse<IEnumerable<DateTime>>.Ok(items));
+    }
+
     /// <summary>
     /// Chuc nang: Lay thong tin phong theo id.
     /// </summary>

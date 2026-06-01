@@ -113,6 +113,19 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
+  Future<List<DateTime>> getBookedDatesByRoom(
+    int roomId, {
+    required DateTime fromDate,
+    required DateTime toDate,
+  }) {
+    return remoteDataSource.getBookedDatesByRoom(
+      roomId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+  }
+
+  @override
   Future<List<TimeSlotEntity>> getTimeSlotsByRoom(int roomId) {
     return remoteDataSource.getTimeSlotsByRoom(roomId);
   }

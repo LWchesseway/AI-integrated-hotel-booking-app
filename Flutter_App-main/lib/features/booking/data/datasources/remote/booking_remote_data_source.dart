@@ -194,6 +194,28 @@ class BookingRemoteDataSource {
         .toList();
   }
 
+  Future<List<DateTime>> getBookedDatesByRoom(
+    int roomId, {
+    required DateTime fromDate,
+    required DateTime toDate,
+  }) async {
+    final response = await _client.get(
+      '/api/rooms/$roomId/booked-dates',
+      query: {
+        'fromDate': DateFormat('yyyy-MM-dd').format(fromDate),
+        'toDate': DateFormat('yyyy-MM-dd').format(toDate),
+      },
+    );
+    final data = response['data'] ?? response;
+    if (data is! List) return [];
+
+    return data
+        .map((item) => DateTime.tryParse(item.toString()))
+        .whereType<DateTime>()
+        .map((date) => DateTime(date.year, date.month, date.day))
+        .toList();
+  }
+
   Future<List<TimeSlotModel>> getTimeSlotsByRoom(int roomId) async {
     final token = await _authStorage.getAccessToken();
     final response = await _client.get(
