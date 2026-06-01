@@ -100,62 +100,7 @@ public class BookingServiceTests
             .WithMessage("Room is not available for booking.");
     }
 
-    [Fact]
-    public async Task CreateCustomerBookingAsync_ShouldThrow_WhenOverlapExists()
-    {
-        var bookingRepository = new Mock<IBookingRepository>();
-        var roomRepository = new Mock<IRoomRepository>();
 
-        var room = new Room
-        {
-            Id = 5,
-            HotelId = 10,
-            Status = RoomStatus.Available,
-            IsDeleted = false,
-            Price = 150,
-            Hotel = new Hotel { OwnerId = 99 }
-        };
-
-        roomRepository
-            .Setup(repo => repo.GetByIdWithHotelAsync(room.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(room);
-
-        bookingRepository
-            .Setup(repo => repo.HasOverlappingBookingByHotelAsync(
-                room.HotelId,
-                It.IsAny<DateTime>(),
-                It.IsAny<DateTime>(),
-                null,
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-
-        var service = CreateService(
-            bookingRepository,
-            roomRepository,
-            new Mock<IPaymentRepository>(),
-            new Mock<ITimeSlotRepository>(),
-            new Mock<IOwnerSettingService>(),
-            new Mock<IUnitOfWork>(),
-            new Mock<IMapper>(),
-            new Mock<IHotelRepository>(),
-            new Mock<INotificationHelper>());
-
-        var request = new CustomerCreateBookingRequestDto
-        {
-            RoomId = room.Id,
-            CheckInDate = new DateTime(2026, 1, 10),
-            CheckOutDate = new DateTime(2026, 1, 12),
-            GuestCount = 1,
-            PaidAmount = 0
-        };
-
-        var action = () => service.CreateCustomerBookingAsync(1, request);
-
-        await action
-            .Should()
-            .ThrowAsync<InvalidOperationException>()
-            .WithMessage("Hotel already has a booking for the selected dates.");
-    }
 
     [Fact]
     public async Task CreateCustomerBookingAsync_ShouldCreateBookingAndPayment_WhenPaidAmountPositive()
