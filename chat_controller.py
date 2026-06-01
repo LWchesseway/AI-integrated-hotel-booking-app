@@ -43,14 +43,6 @@ class ChatResponse(BaseModel):
     thread_id: str
     message: MessageResponse
 
-
-class RegisterRequest(BaseModel):
-    fullName: str | None = None
-    email: str | None = None
-    phoneNumber: str | None = None
-    password: str
-
-
 class LoginRequest(BaseModel):
     email: str | None = None
     phoneNumber: str | None = None
@@ -64,11 +56,6 @@ class RefreshTokenRequest(BaseModel):
 @router.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
-
-
-@router.post("/auth/register")
-def register(payload: RegisterRequest) -> dict:
-    return chat_service.post_auth_api("register", payload.model_dump(exclude_none=True))
 
 
 @router.post("/auth/login")
