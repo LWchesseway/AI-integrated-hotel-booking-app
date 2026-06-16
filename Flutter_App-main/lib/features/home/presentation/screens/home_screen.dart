@@ -12,6 +12,7 @@ import '../bloc/home_bloc.dart';
 import '../../../search/presentation/screens/search_screen.dart';
 import '../../../notification/presentation/screens/notifications_screen.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/fade_in_slide.dart';
 import '../../domain/entities/hotel_recommendation_entity.dart';
 import '../../domain/entities/province_entity.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
@@ -21,12 +22,12 @@ import '../../../hotel/presentation/screens/hotel_detail_screen.dart';
 import '../../../hotel/presentation/screens/create_hotel_screen.dart';
 import '../../../hotel/presentation/screens/my_hotels_screen.dart';
 
-const _kGreen = AppColors.greenPrimary;
-const _kGreenMedium = AppColors.greenMedium;
+const _kGreen = AppColors.primary;
+const _kGreenMedium = AppColors.primaryMedium;
 const _kSurface =
     AppColors.scaffoldBg; // Hoặc Color(0xFFF5F7FA) nếu muốn nền sáng mượt hơn
-const _kTextPrimary = Color(0xFF172B24);
-const _kTextSec = Color(0xFF6B7B75);
+const _kTextPrimary = AppColors.textPrimary;
+const _kTextSec = AppColors.textSecondary;
 
 // --- HÀM FORMAT TIỀN TỆ ---
 String _formatCurrency(double amount) {
@@ -101,7 +102,6 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
     _loadOwnerContext();
     _chatInputController = TextEditingController();
     _chatScrollController = ScrollController();
@@ -109,7 +109,6 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _bannerController.dispose();
     _chatInputController?.dispose();
@@ -808,7 +807,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: const LinearGradient(
-              colors: [Color(0xFF1E7F4D), Color(0xFF2FB66B)],
+              colors: [AppColors.primary, AppColors.primaryMedium],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -820,17 +819,98 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
               ),
             ],
           ),
-          child: const Icon(Icons.auto_awesome, color: Colors.white),
+          child: const Icon(Icons.auto_awesome, color: AppColors.accentGold),
         ),
       ),
     );
   }
 
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<HomeBloc>().add(LoadMoreHotelsEvent());
+  void _scrollToTop() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
     }
+  }
+
+  Widget _buildPaginationControl(BuildContext context, HomeLoaded state) {
+    final hasPrev = state.pageIndex > 1;
+    final hasNext = !state.hasReachedMax;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Previous Page Button
+        ElevatedButton.icon(
+          onPressed: hasPrev && !state.isFetchingMore
+              ? () {
+                  context.read<HomeBloc>().add(
+                        ChangePageEvent(state.pageIndex - 1),
+                      );
+                  _scrollToTop();
+                }
+              : null,
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 14),
+          label: const Text('Trang trước'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: Colors.grey.shade200,
+            disabledForegroundColor: Colors.grey.shade400,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            elevation: 0,
+          ),
+        ),
+
+        // Page Indicator
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.primarySurface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+          ),
+          child: Text(
+            'Trang ${state.pageIndex}',
+            style: GoogleFonts.dmSans(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+
+        // Next Page Button
+        ElevatedButton.icon(
+          onPressed: hasNext && !state.isFetchingMore
+              ? () {
+                  context.read<HomeBloc>().add(
+                        ChangePageEvent(state.pageIndex + 1),
+                      );
+                  _scrollToTop();
+                }
+              : null,
+          icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+          label: const Text('Trang sau'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: Colors.grey.shade200,
+            disabledForegroundColor: Colors.grey.shade400,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            elevation: 0,
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _loadOwnerContext() async {
@@ -981,86 +1061,119 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                             slivers: [
                               // 1. Header & Logo
                               SliverToBoxAdapter(
-                                child: _buildHeader(context, state.fullName),
+                                child: FadeInSlide(
+                                  delay: 0.0,
+                                  child: _buildHeader(context, state.fullName),
+                                ),
                               ),
 
                               // 2. Thanh Tim Kiem
                               SliverToBoxAdapter(
-                                child: _buildSearchBar(context),
+                                child: FadeInSlide(
+                                  delay: 0.05,
+                                  child: _buildSearchBar(context),
+                                ),
                               ),
 
                               if (_isOwner)
                                 SliverToBoxAdapter(
-                                  child: _buildOwnerStatsCard(),
+                                  child: FadeInSlide(
+                                    delay: 0.1,
+                                    child: _buildOwnerStatsCard(),
+                                  ),
                                 ),
 
                               // 3. Banner Quang cao
-                              SliverToBoxAdapter(child: _buildPromoBanner()),
+                              SliverToBoxAdapter(
+                                child: FadeInSlide(
+                                  delay: 0.15,
+                                  child: _buildPromoBanner(),
+                                ),
+                              ),
 
                               // 4. Danh sach tinh/thanh pho
                               SliverToBoxAdapter(
-                                child: _buildProvincesSection(context, state),
+                                child: FadeInSlide(
+                                  delay: 0.2,
+                                  child: _buildProvincesSection(context, state),
+                                ),
                               ),
 
                               // 5. Tieu de khach san noi bat
                               SliverToBoxAdapter(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    20,
-                                    24,
-                                    20,
-                                    16,
-                                  ),
-                                  child: Text(
-                                    'Khach san danh cho ban',
-                                    style: GoogleFonts.dmSans(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _kTextPrimary,
+                                child: FadeInSlide(
+                                  delay: 0.25,
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      20,
+                                      24,
+                                      20,
+                                      16,
+                                    ),
+                                    child: Text(
+                                      'Khach san danh cho ban',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: _kTextPrimary,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
 
-                              // 6. Danh sach khach san
+                              // 6. Danh sach khach san dạng lưới 2 cột
                               SliverPadding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                 ),
-                                sliver: SliverList(
-                                  key: const Key('hotel_list'),
+                                sliver: SliverGrid(
+                                  key: const Key('hotel_grid'),
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 14,
+                                    crossAxisSpacing: 14,
+                                    childAspectRatio: 0.74,
+                                  ),
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) {
-                                      if (index == state.hotels.length) {
-                                        return state.isFetchingMore
-                                            ? const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 20,
-                                                ),
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        color: _kGreen,
-                                                      ),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink();
-                                      }
                                       final hotel = state.hotels[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 20,
-                                        ),
-                                        child: _HotelCard(
+                                      final animDelay = index < 6 ? index * 0.05 : 0.0;
+                                      return FadeInSlide(
+                                        delay: animDelay,
+                                        child: _HotelGridCard(
                                           hotel: hotel,
                                           index: index,
                                         ),
                                       );
                                     },
-                                    childCount:
-                                        state.hotels.length +
-                                        (state.isFetchingMore ? 1 : 0),
+                                    childCount: state.hotels.length,
                                   ),
+                                ),
+                              ),
+
+                              if (state.isFetchingMore)
+                                const SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 20,
+                                    ),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: _kGreen,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              // 7. Phan trang
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  child: _buildPaginationControl(context, state),
                                 ),
                               ),
 
@@ -1650,27 +1763,20 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   }
 }
 
-// --- WIDGET: THẺ KHÁCH SẠN (HOTEL CARD) ---
-class _HotelCard extends StatelessWidget {
+// --- WIDGET: THẺ KHÁCH SẠN DẠNG LƯỚI (HOTEL GRID CARD) ---
+class _HotelGridCard extends StatelessWidget {
   final HotelRecommendationEntity hotel;
   final int index;
 
-  const _HotelCard({required this.hotel, required this.index});
+  const _HotelGridCard({required this.hotel, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    // 1. CƠ CHẾ FALLBACK ẢNH RẤT QUAN TRỌNG
-    // Nếu API trả về null hoặc rỗng, dùng ảnh xịn này để app luôn đẹp
+    // 1. CƠ CHẾ FALLBACK ẢNH
     const String defaultHotelImage =
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
 
-    // Tùy theo Entity của bạn có trường imageUrl hay list ảnh
-    // Dưới đây giả định Entity có property tên là `imageUrl` hoặc `images`
     String displayImage = defaultHotelImage;
-    // GIẢ THUYẾT: Nếu entity của bạn gọi là hotel.imageUrl (Sửa lại cho đúng với entity của bạn)
-    // if (hotel.imageUrl != null && hotel.imageUrl!.isNotEmpty) {
-    //   displayImage = hotel.imageUrl!;
-    // }
 
     return GestureDetector(
       key: Key('hotel_card_$index'),
@@ -1689,134 +1795,132 @@ class _HotelCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(color: Colors.grey.shade100, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Phần 1: Hình ảnh
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                  child: Image.network(
-                    displayImage,
-                    height: 180,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Nếu link ảnh từ DB bị chết (404), nó sẽ tự động render ảnh này thay vì báo lỗi đỏ
-                      return Image.network(
-                        defaultHotelImage,
-                        height: 180,
-                        width: double.infinity,
+            // 1. Hình ảnh thu nhỏ & các Badges
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(15),
+                      ),
+                      child: Image.network(
+                        displayImage,
                         fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-                // Nút thả tim (Favorite)
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.favorite_border_rounded,
-                      color: Colors.redAccent,
-                      size: 20,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.network(
+                            defaultHotelImage,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                // Badge Đánh giá
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          color: Colors.amber,
+                  // Nút thả tim (Favorite) nhỏ gọn
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.favorite_border_rounded,
+                          color: Colors.redAccent,
                           size: 16,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${hotel.averageRating ?? 4.5}',
-                          style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  // Badge Đánh giá nhỏ gọn
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white.withOpacity(0.15)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            '${hotel.averageRating ?? 4.5}',
+                            style: GoogleFonts.dmSans(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
-            // Phần 2: Nội dung chi tiết
+            // 2. Thông tin chi tiết
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          hotel.name ?? 'Tên khách sạn',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: _kTextPrimary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                  // Tên khách sạn
+                  Text(
+                    hotel.name ?? 'Tên khách sạn',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: _kTextPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
+                  
+                  // Vị trí địa lý
                   Row(
                     children: [
                       const Icon(
                         Icons.location_on_rounded,
                         color: _kGreen,
-                        size: 16,
+                        size: 12,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       Expanded(
                         child: Text(
                           hotel.province ?? 'Địa chỉ',
                           style: GoogleFonts.dmSans(
-                            fontSize: 14,
+                            fontSize: 11,
                             color: _kTextSec,
                           ),
                           maxLines: 1,
@@ -1825,63 +1929,35 @@ class _HotelCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Divider(color: Color(0xFFEEEEEE), height: 1),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Giá từ',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 12,
-                              color: _kTextSec,
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${_formatCurrency(hotel.avgRoomPrice ?? 500000.0)}₫',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900,
-                                  color: _kGreen,
-                                ),
-                              ),
-                              Text(
-                                ' /đêm',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 12,
-                                  color: _kTextSec,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                  const SizedBox(height: 6),
+                  
+                  // Đường gạch ngang mảnh
+                  const Divider(color: Color(0xFFF5F5F5), height: 1),
+                  const SizedBox(height: 6),
+
+                  // Giá phòng
+                  RichText(
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: _kGreen,
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
+                      children: [
+                        TextSpan(
+                          text: '${_formatCurrency(hotel.avgRoomPrice ?? 500000.0)}₫',
                         ),
-                        decoration: BoxDecoration(
-                          color: _kGreen,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          'Đặt ngay',
+                        TextSpan(
+                          text: ' /đêm',
                           style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                            color: _kTextSec,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -71,6 +71,6 @@ class AppTextStyles {
   static TextStyle get price => GoogleFonts.poppins(
         fontSize: 18,
         fontWeight: FontWeight.w700,
-        color: AppColors.greenPrimary,
+        color: AppColors.primary,
       );
 }

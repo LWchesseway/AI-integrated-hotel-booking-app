@@ -144,7 +144,7 @@ class _RegisterScreenContentState extends State<_RegisterScreenContent> {
                   children: [
                     Image.asset('Assets/images/logo.png', height: 95, fit: BoxFit.contain),
                     const SizedBox(height: 25),
-                    Text('White Hotel', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.brownAccent)),
+                    Text('White Hotel', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.accentGold)),
                     const SizedBox(height: 40),
 
                     CustomTextField(label: 'Họ và tên', controller: _nameController, icon: Icons.person_outline, errorText: _nameError, textInputAction: TextInputAction.next),
@@ -166,7 +166,7 @@ class _RegisterScreenContentState extends State<_RegisterScreenContent> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Checkbox(value: _agree, activeColor: AppColors.greenPrimary, onChanged: (v) => setState(() => _agree = v ?? false)),
+                        Checkbox(value: _agree, activeColor: AppColors.primary, onChanged: (v) => setState(() => _agree = v ?? false)),
                         const SizedBox(width: 8),
                         Expanded(child: Text('Tôi đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.', style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[700]))),
                       ],
@@ -177,7 +177,7 @@ class _RegisterScreenContentState extends State<_RegisterScreenContent> {
                       width: double.infinity, height: 55,
                       child: ElevatedButton(
                         onPressed: isLoading ? null : _handleRegister,
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.greenPrimary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                         child: isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('Đăng ký ngay', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                     ),

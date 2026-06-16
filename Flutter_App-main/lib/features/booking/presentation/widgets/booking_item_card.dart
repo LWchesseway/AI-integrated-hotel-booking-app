@@ -30,7 +30,7 @@ class BookingItemCard extends StatelessWidget {
       case 3:
         return AppColors.statusCompleted;
       default:
-        return AppColors.brownLight;
+        return AppColors.textMuted;
     }
   }
 
@@ -49,7 +49,7 @@ class BookingItemCard extends StatelessWidget {
           border: Border.all(color: AppColors.divider.withOpacity(0.6)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.brownDark.withOpacity(0.04),
+              color: AppColors.textDark.withOpacity(0.04),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -65,12 +65,12 @@ class BookingItemCard extends StatelessWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppColors.greenSurface,
+                      color: AppColors.primarySurface,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.hotel_rounded,
-                      color: AppColors.greenPrimary,
+                      color: AppColors.primary,
                       size: 32,
                     ),
                   ),
@@ -129,7 +129,7 @@ class BookingItemCard extends StatelessWidget {
                             hotelLabel!,
                             style: GoogleFonts.dmSans(
                               fontSize: 13,
-                              color: AppColors.greenPrimary,
+                              color: AppColors.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -166,7 +166,7 @@ class BookingItemCard extends StatelessWidget {
                     style: GoogleFonts.dmSans(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
-                      color: AppColors.greenPrimary,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],

@@ -9,7 +9,7 @@ import '../../domain/repositories/booking_repository.dart';
 import '../../domain/entities/room_entity.dart';
 import 'payment_screen.dart';
 
-const _kGreen = AppColors.greenPrimary;
+const _kGreen = AppColors.primary;
 const _kSurface = Color(0xFFF8FAFC);
 const _kTextPrimary = Color(0xFF1E293B);
 const _kRed = Color(0xFFEF4444);

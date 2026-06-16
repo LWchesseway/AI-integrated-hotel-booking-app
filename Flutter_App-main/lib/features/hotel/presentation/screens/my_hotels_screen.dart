@@ -90,11 +90,11 @@ class _MyHotelsScreenState extends State<MyHotelsScreen> {
         centerTitle: true,
       ),
       body: RefreshIndicator(
-        color: AppColors.greenPrimary,
+        color: AppColors.primary,
         onRefresh: _fetchMyHotels,
         child: _isLoading
             ? const Center(
-                child: CircularProgressIndicator(color: AppColors.greenPrimary),
+                child: CircularProgressIndicator(color: AppColors.primary),
               )
             : _hotels.isEmpty
                 ? ListView(
@@ -199,7 +199,7 @@ class _MyHotelsScreenState extends State<MyHotelsScreen> {
                                     children: [
                                       const Icon(
                                         Icons.location_on_rounded,
-                                        color: AppColors.greenMedium,
+                                        color: AppColors.primaryMedium,
                                         size: 16,
                                       ),
                                       const SizedBox(width: 6),
@@ -244,12 +244,12 @@ class _MyHotelsScreenState extends State<MyHotelsScreen> {
                                           ),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.greenPrimary,
+                                          backgroundColor: AppColors.primary,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(12),
                                           ),
                                           elevation: 2,
-                                          shadowColor: AppColors.greenPrimary.withOpacity(0.2),
+                                          shadowColor: AppColors.primary.withOpacity(0.2),
                                         ),
                                       ),
                                     ],

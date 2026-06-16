@@ -38,7 +38,7 @@ class DialogUtils {
             child: ElevatedButton(
               onPressed: onPressed ?? () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.greenPrimary,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(

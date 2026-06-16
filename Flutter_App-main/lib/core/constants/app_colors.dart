@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
 
-/// Nature-inspired palette: Green (Primary) + Beige (Background) + Brown (Accent/Text)
+/// Premium Luxury Palette: Deep Slate Navy (Primary) + Champagne Gold (Accent) + Cool Off-white (Background)
 class AppColors {
-  // ── Primary Green ──────────────────────────────────────────────
-  static const Color greenPrimary   = Color(0xFF2E7D32); // deep forest green
-  static const Color greenMedium    = Color(0xFF43A047); // standard green
-  static const Color greenLight     = Color(0xFF81C784); // soft mint
-  static const Color greenSurface   = Color(0xFFE8F5E9); // very light green tint
+  // ── Primary Slate Navy ──────────────────────────────────────────
+  static const Color primary          = Color(0xFF1E3A8A); // Deep Royal Navy
+  static const Color primaryMedium    = Color(0xFF2C5282); // Medium Slate Blue
+  static const Color primarySurface   = Color(0xFFEFF6FF); // Soft Blue-Grey Tint
+  
+  // ── Accent Champagne Gold ───────────────────────────────────────
+  static const Color accentGold       = Color(0xFFD4AF37); // Luxury Champagne Gold
 
-  // ── Beige / Warm Neutral ────────────────────────────────────────
-  static const Color scaffoldBg     = Color(0xFFF9F5F0); // warm off-white
-  static const Color cardBg         = Color(0xFFFDFAF6); // creamy card surface
-  static const Color divider        = Color(0xFFE8E0D5); // warm divider
+  // ── Cool Neutral Backgrounds ────────────────────────────────────
+  static const Color scaffoldBg       = Color(0xFFF8FAFC); // Cool Slate Off-White
+  static const Color cardBg           = Color(0xFFFFFFFF); // Pure White Card Surface
+  static const Color divider          = Color(0xFFE2E8F0); // Modern Slate Divider
 
-  // ── Brown Accent ────────────────────────────────────────────────
-  static const Color brownDark      = Color(0xFF4E342E); // dark espresso
-  static const Color brownAccent    = Color(0xFF6D4C41); // rich wood
-  static const Color brownLight     = Color(0xFFA1887F); // warm taupe
-  static const Color brownSurface   = Color(0xFFF3E5DC); // blush beige
+  // ── Surfaces & Text Details ─────────────────────────────────────
+  static const Color textDark         = Color(0xFF0F172A); // Dark Slate Charcoal
+  static const Color textMuted        = Color(0xFF64748B); // Medium Slate Grey
+  static const Color surfaceLight     = Color(0xFFF1F5F9); // Very Light Grey Surface
 
-  // ── Text ────────────────────────────────────────────────────────
-  static const Color textPrimary    = Color(0xFF3E2723); // near-black brown
-  static const Color textSecondary  = Color(0xFF6D4C41); // medium brown
-  static const Color textHint       = Color(0xFFA1887F); // taupe hint
+  // ── Typography Colors (preserves existing text name mapping) ───
+  static const Color textPrimary      = Color(0xFF0F172A); // Dark Slate primary text
+  static const Color textSecondary    = Color(0xFF475569); // Medium Slate secondary text
+  static const Color textHint         = Color(0xFF94A3B8); // Light Slate hint text
 
-  // ── Status ──────────────────────────────────────────────────────
-  static const Color error          = Color(0xFFC62828);
-  static const Color warning        = Color(0xFFF57F17);
-  static const Color success        = Color(0xFF2E7D32);
-  static const Color info           = Color(0xFF01579B);
+  // ── Semantic Status Colors (strictly green/red for indicators) ──
+  static const Color error            = Color(0xFFEF4444); // Modern Red
+  static const Color warning          = Color(0xFFF59E0B); // Modern Amber
+  static const Color success          = Color(0xFF10B981); // Modern Emerald Green
+  static const Color info             = Color(0xFF3B82F6); // Modern Blue
 
   // ── Booking Status chips ────────────────────────────────────────
-  static const Color statusPending    = Color(0xFFFF8F00); // amber
-  static const Color statusConfirmed  = Color(0xFF2E7D32); // green
-  static const Color statusCancelled  = Color(0xFFC62828); // red
-  static const Color statusCompleted  = Color(0xFF0277BD); // blue
+  static const Color statusPending    = Color(0xFFF59E0B); // Amber
+  static const Color statusConfirmed  = Color(0xFF10B981); // Emerald Green
+  static const Color statusCancelled  = Color(0xFFEF4444); // Red
+  static const Color statusCompleted  = Color(0xFF3B82F6); // Blue
 }

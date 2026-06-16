@@ -97,7 +97,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
             child: Icon(
               Icons.calendar_today_outlined,
               size: 64,
-              color: AppColors.greenPrimary.withOpacity(0.2),
+              color: AppColors.primary.withOpacity(0.2),
             ),
           ),
           const SizedBox(height: 24),
@@ -125,7 +125,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.greenPrimary,
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -173,7 +173,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
             const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.greenPrimary,
+                backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -194,13 +194,13 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F5F0),
+      backgroundColor: AppColors.scaffoldBg,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle.light,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.greenPrimary, AppColors.greenMedium],
+              colors: [AppColors.primary, AppColors.primaryMedium],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -215,7 +215,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
           ),
         ),
         elevation: 2,
-        shadowColor: AppColors.greenPrimary.withOpacity(0.2),
+        shadowColor: AppColors.primary.withOpacity(0.2),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
@@ -242,7 +242,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
                   ),
                 ],
               ),
-              labelColor: AppColors.brownDark,
+              labelColor: AppColors.textDark,
               unselectedLabelColor: Colors.white.withOpacity(0.85),
               labelStyle: GoogleFonts.dmSans(
                 fontWeight: FontWeight.bold,
@@ -267,7 +267,7 @@ class _MyBookingsScreenViewState extends State<_MyBookingsScreenView>
         builder: (context, state) {
           if (state is BookingLoading || state is BookingInitial) {
             return const Center(
-              child: CircularProgressIndicator(color: AppColors.greenPrimary),
+              child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
 

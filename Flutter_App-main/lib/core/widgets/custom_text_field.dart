@@ -63,7 +63,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[400]),
-            prefixIcon: Icon(icon, color: AppColors.brownAccent),
+            prefixIcon: Icon(icon, color: AppColors.accentGold),
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
@@ -87,7 +87,7 @@ class CustomTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: errorText != null ? Colors.red : AppColors.greenPrimary, width: 1.5),
+              borderSide: BorderSide(color: errorText != null ? Colors.red : AppColors.primary, width: 1.5),
             ),
           ),
         ),

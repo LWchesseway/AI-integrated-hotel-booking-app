@@ -88,7 +88,7 @@ class _NotificationsScreenViewState extends State<_NotificationsScreenView> {
           if (state.isLoading && state.notifications.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(
-                color: AppColors.greenPrimary,
+                color: AppColors.primary,
                 strokeWidth: 3,
               ),
             );
@@ -104,7 +104,7 @@ class _NotificationsScreenViewState extends State<_NotificationsScreenView> {
           }
 
           return RefreshIndicator(
-            color: AppColors.greenPrimary,
+            color: AppColors.primary,
             onRefresh: () async {
               context.read<NotificationBloc>().add(const LoadNotificationsEvent(reset: true));
             },
@@ -119,7 +119,7 @@ class _NotificationsScreenViewState extends State<_NotificationsScreenView> {
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.greenPrimary,
+                        color: AppColors.primary,
                         strokeWidth: 2,
                       ),
                     ),
@@ -156,7 +156,7 @@ class _NotificationsScreenViewState extends State<_NotificationsScreenView> {
             const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.greenPrimary,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
@@ -180,7 +180,7 @@ class _NotificationsScreenViewState extends State<_NotificationsScreenView> {
               color: Color(0xFFE8F5E9),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.notifications_none_rounded, size: 64, color: AppColors.greenPrimary),
+            child: const Icon(Icons.notifications_none_rounded, size: 64, color: AppColors.primary),
           ),
           const SizedBox(height: 24),
           Text(
@@ -211,7 +211,7 @@ class _NotificationItemCard extends StatelessWidget {
 
     // Tự động nhận diện Icon và màu sắc dựa trên nội dung trạng thái đặt phòng
     IconData iconData = Icons.stars_rounded;
-    Color iconColor = AppColors.greenPrimary;
+    Color iconColor = AppColors.primary;
     Color iconBg = const Color(0xFFE8F5E9);
 
     final titleLower = (notification.title ?? '').toLowerCase();
@@ -221,7 +221,7 @@ class _NotificationItemCard extends StatelessWidget {
       iconBg = const Color(0xFFFFEBEE);
     } else if (titleLower.contains('xác nhận') || titleLower.contains('thành công') || titleLower.contains('duyệt')) {
       iconData = Icons.check_circle_rounded;
-      iconColor = AppColors.greenPrimary;
+      iconColor = AppColors.primary;
       iconBg = const Color(0xFFE8F5E9);
     } else if (titleLower.contains('chờ') || titleLower.contains('mới')) {
       iconData = Icons.pending_rounded;
@@ -234,7 +234,7 @@ class _NotificationItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isUnread ? const Color(0xFFF1F8F5) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: isUnread ? Border.all(color: AppColors.greenPrimary.withValues(alpha: 0.15), width: 1) : null,
+        border: isUnread ? Border.all(color: AppColors.primary.withValues(alpha: 0.15), width: 1) : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -315,7 +315,7 @@ class _NotificationItemCard extends StatelessWidget {
                               width: 7,
                               height: 7,
                               decoration: const BoxDecoration(
-                                color: AppColors.greenPrimary,
+                                color: AppColors.primary,
                                 shape: BoxShape.circle,
                               ),
                             ),

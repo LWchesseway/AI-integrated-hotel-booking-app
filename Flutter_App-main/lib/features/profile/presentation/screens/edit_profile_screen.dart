@@ -92,7 +92,7 @@ class _EditProfileScreenViewState extends State<_EditProfileScreenView> {
       backgroundColor: const Color(0xFFF5F7F6),
       appBar: AppBar(
         title: Text('Chỉnh sửa Profile', style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold)),
-        backgroundColor: AppColors.greenPrimary,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -156,7 +156,7 @@ class _EditProfileScreenViewState extends State<_EditProfileScreenView> {
           style: GoogleFonts.dmSans(fontSize: 15),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, size: 20, color: AppColors.greenPrimary),
+            prefixIcon: Icon(icon, size: 20, color: AppColors.primary),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -179,7 +179,7 @@ class _EditProfileScreenViewState extends State<_EditProfileScreenView> {
           height: 58,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.greenPrimary,
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
               elevation: 0,
             ),

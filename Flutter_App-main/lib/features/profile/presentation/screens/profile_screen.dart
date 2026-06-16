@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7F6),
+        backgroundColor: AppColors.scaffoldBg,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.fromLTRB(24, 80, 24, 40),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.greenPrimary, Color(0xFF23B97A)],
+          colors: [AppColors.primary, AppColors.primaryMedium],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-            child: const CircleAvatar(radius: 50, backgroundColor: Color(0xFFE8F5E9), child: Icon(Icons.person, size: 50, color: AppColors.greenPrimary)),
+            child: const CircleAvatar(radius: 50, backgroundColor: AppColors.primarySurface, child: Icon(Icons.person, size: 50, color: AppColors.primary)),
           ),
           const SizedBox(height: 16),
           Text(_fullName, style: GoogleFonts.playfairDisplay(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -196,10 +196,10 @@ class _MenuItem extends StatelessWidget {
       onTap: onTap,
       leading: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: AppColors.greenPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-        child: Icon(icon, color: AppColors.greenPrimary, size: 20),
+        decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+        child: Icon(icon, color: AppColors.primary, size: 20),
       ),
-      title: Text(title, style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1A2B24))),
+      title: Text(title, style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
       trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey),
     );
   }

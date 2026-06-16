@@ -111,7 +111,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                       style: GoogleFonts.poppins(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.brownAccent,
+                        color: AppColors.accentGold,
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -156,7 +156,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                         key: const Key('login_submit_button'),
                         onPressed: isLoading ? null : _handleLogin,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.greenPrimary,
+                          backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -186,7 +186,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                       child: const Text(
                         'Tạo tài khoản',
                         style: TextStyle(
-                          color: AppColors.greenPrimary,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

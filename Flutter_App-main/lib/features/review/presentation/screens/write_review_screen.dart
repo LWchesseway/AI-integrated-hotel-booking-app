@@ -70,7 +70,7 @@ class _WriteReviewScreenViewState extends State<_WriteReviewScreenView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg,
       appBar: AppBar(
-        backgroundColor: AppColors.greenPrimary,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         title: Text('Viết đánh giá',
             style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w700)),
@@ -82,7 +82,7 @@ class _WriteReviewScreenViewState extends State<_WriteReviewScreenView> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Đánh giá đã được gửi!', style: GoogleFonts.poppins()),
-                backgroundColor: AppColors.greenPrimary,
+                backgroundColor: AppColors.primary,
               ),
             );
             Navigator.pop(context, true);
@@ -121,7 +121,7 @@ class _WriteReviewScreenViewState extends State<_WriteReviewScreenView> {
               const SizedBox(height: 8),
               Text(
                 _ratingLabel(_rating),
-                style: AppTextStyles.labelLarge.copyWith(color: AppColors.brownAccent),
+                style: AppTextStyles.labelLarge.copyWith(color: AppColors.accentGold),
               ),
               const SizedBox(height: 32),
               // Comment
@@ -139,7 +139,7 @@ class _WriteReviewScreenViewState extends State<_WriteReviewScreenView> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: AppColors.greenPrimary, width: 2),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
                   ),
                   contentPadding: const EdgeInsets.all(16),
                 ),
@@ -151,7 +151,7 @@ class _WriteReviewScreenViewState extends State<_WriteReviewScreenView> {
                 child: ElevatedButton(
                   onPressed: isSubmitting ? null : _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.greenPrimary,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),

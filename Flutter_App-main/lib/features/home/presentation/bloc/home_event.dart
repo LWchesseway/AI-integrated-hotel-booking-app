@@ -11,3 +11,9 @@ class RefreshHotelsEvent extends HomeEvent {
 }
 
 class LoadMoreHotelsEvent extends HomeEvent {}
+
+class ChangePageEvent extends HomeEvent {
+  final int pageIndex;
+
+  ChangePageEvent(this.pageIndex);
+}

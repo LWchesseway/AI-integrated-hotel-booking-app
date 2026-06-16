@@ -82,7 +82,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
                     state.isFav ? 'Đã thêm vào yêu thích' : 'Đã bỏ yêu thích',
                     style: GoogleFonts.dmSans(fontWeight: FontWeight.w600),
                   ),
-                  backgroundColor: AppColors.greenPrimary,
+                  backgroundColor: AppColors.primary,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -95,7 +95,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
           builder: (context, state) {
             if (state is HotelLoading || state is HotelInitial) {
               return const Center(
-                child: CircularProgressIndicator(color: AppColors.greenPrimary),
+                child: CircularProgressIndicator(color: AppColors.primary),
               );
             } else if (state is HotelError) {
               return _buildErrorState(context, state.message);
@@ -129,7 +129,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.greenPrimary,
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -191,7 +191,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: 320,
       pinned: true,
-      backgroundColor: AppColors.greenPrimary,
+      backgroundColor: AppColors.primary,
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -241,11 +241,11 @@ class _HotelDetailScreenContent extends StatelessWidget {
               'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1000',
               fit: BoxFit.cover,
               errorBuilder: (ctx, err, stack) => Container(
-                color: AppColors.greenMedium.withValues(alpha: 0.3),
+                color: AppColors.primaryMedium.withValues(alpha: 0.3),
                 child: const Icon(
                   Icons.hotel,
                   size: 80,
-                  color: AppColors.greenPrimary,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -282,7 +282,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppColors.greenPrimary.withValues(alpha: 0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -294,13 +294,13 @@ class _HotelDetailScreenContent extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.greenPrimary.withValues(alpha: 0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 'Khách sạn',
                 style: GoogleFonts.dmSans(
-                  color: AppColors.greenPrimary,
+                  color: AppColors.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -446,7 +446,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
                     ),
                     child: Icon(
                       a['icon'] as IconData,
-                      color: AppColors.greenPrimary,
+                      color: AppColors.primary,
                       size: 26,
                     ),
                   ),
@@ -480,7 +480,7 @@ class _HotelDetailScreenContent extends StatelessWidget {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           boxShadow: [
             BoxShadow(
-              color: AppColors.greenPrimary.withValues(alpha: 0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -495,14 +495,14 @@ class _HotelDetailScreenContent extends StatelessWidget {
                   height: 58,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [AppColors.greenPrimary, Color(0xFF23B97A)],
+                      colors: [AppColors.primary, Color(0xFF23B97A)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.greenPrimary.withValues(alpha: 0.35),
+                        color: AppColors.primary.withValues(alpha: 0.35),
                         blurRadius: 16,
                         offset: const Offset(0, 6),
                       ),

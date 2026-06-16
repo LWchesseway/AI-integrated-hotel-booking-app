@@ -101,7 +101,7 @@ class _UserListScreenViewState extends State<_UserListScreenView> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.greenPrimary, AppColors.greenMedium],
+              colors: [AppColors.primary, AppColors.primaryMedium],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -127,7 +127,7 @@ class _UserListScreenViewState extends State<_UserListScreenView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.greenPrimary,
+        backgroundColor: AppColors.primary,
         onPressed: () => _openForm(),
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -189,12 +189,12 @@ class _UserListScreenViewState extends State<_UserListScreenView> {
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: AppColors.greenSurface,
+            backgroundColor: AppColors.primarySurface,
             child: Text(
               user.fullName.isNotEmpty ? user.fullName[0].toUpperCase() : 'U',
               style: GoogleFonts.dmSans(
                 fontWeight: FontWeight.bold,
-                color: AppColors.greenPrimary,
+                color: AppColors.primary,
               ),
             ),
           ),

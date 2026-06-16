@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/storage/auth_storage.dart';
+import '../../../../core/widgets/fade_indexed_stack.dart';
 import '../../../booking/presentation/screens/my_bookings_screen.dart';
 import '../../../booking/presentation/screens/owner_booking_approvals_screen.dart';
 import '../../../favorite/presentation/screens/favorites_screen.dart';
@@ -113,9 +114,9 @@ class _MainNavScreenState extends State<MainNavScreen> {
       key: const Key('main_nav_screen'),
       body: !_isSessionLoaded
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.greenPrimary),
+              child: CircularProgressIndicator(color: AppColors.primary),
             )
-          : IndexedStack(index: safeIndex, children: screens),
+          : FadeIndexedStack(index: safeIndex, children: screens),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           boxShadow: [
@@ -146,7 +147,7 @@ class _MainNavScreenState extends State<MainNavScreen> {
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
-          selectedItemColor: AppColors.greenPrimary,
+          selectedItemColor: AppColors.primary,
           unselectedItemColor: AppColors.textHint,
           selectedLabelStyle: GoogleFonts.poppins(
             fontSize: 11,

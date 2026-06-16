@@ -96,7 +96,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.greenPrimary, AppColors.greenMedium],
+              colors: [AppColors.primary, AppColors.primaryMedium],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -200,7 +200,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                       SwitchListTile.adaptive(
                         title: Text('Hoạt động', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
                         value: _active,
-                        activeTrackColor: AppColors.greenLight,
+                        activeTrackColor: AppColors.accentGold,
                         onChanged: (v) => setState(() => _active = v),
                       ),
                     ],
@@ -210,7 +210,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                       height: 52,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.greenPrimary,
+                          backgroundColor: AppColors.primary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
@@ -273,7 +273,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
           enabled: enabled,
           style: GoogleFonts.poppins(fontSize: 14),
           decoration: InputDecoration(
-            prefixIcon: icon != null ? Icon(icon, color: AppColors.brownAccent) : null,
+            prefixIcon: icon != null ? Icon(icon, color: AppColors.accentGold) : null,
             filled: true,
             fillColor: enabled ? Colors.white : Colors.grey.shade100,
             contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
@@ -287,7 +287,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.greenPrimary, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),

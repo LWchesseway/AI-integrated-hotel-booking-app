@@ -80,7 +80,7 @@ class _PaymentScreenView extends StatelessWidget {
             context: context,
             barrierDismissible: false,
             builder: (_) => const Center(
-              child: CircularProgressIndicator(color: AppColors.greenPrimary),
+              child: CircularProgressIndicator(color: AppColors.primary),
             ),
           );
         } else if (state is BookingCreatedSuccess) {
@@ -149,7 +149,7 @@ class _PaymentScreenView extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.greenPrimary,
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -201,7 +201,7 @@ class _PaymentScreenView extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: AppColors.greenPrimary.withOpacity(0.2),
+                color: AppColors.primary.withOpacity(0.2),
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -225,7 +225,7 @@ class _PaymentScreenView extends StatelessWidget {
             'Nội dung: Đặt phòng $roomId',
             style: const TextStyle(
               fontWeight: FontWeight.w500,
-              color: AppColors.greenPrimary,
+              color: AppColors.primary,
             ),
           ),
         ],
@@ -237,7 +237,7 @@ class _PaymentScreenView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.greenPrimary,
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -353,7 +353,7 @@ class _PaymentScreenView extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.greenPrimary,
+                  backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

@@ -300,7 +300,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
       ),
       body: (_isLoadingWards || _isLoadingRooms)
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.greenPrimary),
+              child: CircularProgressIndicator(color: AppColors.primary),
             )
           : Stack(
               children: [
@@ -369,7 +369,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
                                     border: isSelected
-                                        ? Border.all(color: AppColors.greenPrimary, width: 3)
+                                        ? Border.all(color: AppColors.primary, width: 3)
                                         : null,
                                     image: DecorationImage(
                                       image: NetworkImage(img),
@@ -472,7 +472,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
                         // Thẻ phòng Thường
                         _buildRoomPriceCard(
                           title: 'PHÒNG THƯỜNG (Standard Room)',
-                          color: AppColors.greenPrimary,
+                          color: AppColors.primary,
                           count: _regularRooms.length,
                           priceController: _regularPriceController,
                         ),
@@ -485,12 +485,12 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
                           child: ElevatedButton(
                             onPressed: _saveForm,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.greenPrimary,
+                              backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 4,
-                              shadowColor: AppColors.greenPrimary.withOpacity(0.3),
+                              shadowColor: AppColors.primary.withOpacity(0.3),
                             ),
                             child: Text(
                               'Lưu thay đổi',
@@ -520,7 +520,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const CircularProgressIndicator(color: AppColors.greenPrimary),
+                              const CircularProgressIndicator(color: AppColors.primary),
                               const SizedBox(height: 20),
                               Text(
                                 'Đang lưu thay đổi...',
@@ -552,7 +552,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
   Widget _buildSectionHeader(String title, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.greenPrimary, size: 20),
+        Icon(icon, color: AppColors.primary, size: 20),
         const SizedBox(width: 8),
         Text(
           title,
@@ -599,7 +599,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.dmSans(color: AppColors.textHint, fontSize: 13),
-            prefixIcon: Icon(icon, color: AppColors.greenMedium, size: 20),
+            prefixIcon: Icon(icon, color: AppColors.primaryMedium, size: 20),
             filled: true,
             fillColor: AppColors.cardBg,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -613,7 +613,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: AppColors.greenPrimary, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
             ),
           ),
         ),
@@ -646,7 +646,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
           onChanged: onChanged,
           style: GoogleFonts.dmSans(color: AppColors.textPrimary, fontSize: 14),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: AppColors.greenMedium, size: 20),
+            prefixIcon: Icon(icon, color: AppColors.primaryMedium, size: 20),
             filled: true,
             fillColor: AppColors.cardBg,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -660,7 +660,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: AppColors.greenPrimary, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
             ),
           ),
         ),
@@ -760,7 +760,7 @@ class _EditHotelScreenState extends State<EditHotelScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.greenPrimary),
+                          borderSide: const BorderSide(color: AppColors.primary),
                         ),
                       ),
                     ),

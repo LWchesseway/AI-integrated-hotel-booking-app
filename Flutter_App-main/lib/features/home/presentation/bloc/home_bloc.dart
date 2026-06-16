@@ -20,6 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadHomeDataEvent>(_onLoadHomeData);
     on<RefreshHotelsEvent>(_onRefreshHotels);
     on<LoadMoreHotelsEvent>(_onLoadMoreHotels);
+    on<ChangePageEvent>(_onChangePage);
   }
 
   Future<void> _onLoadHomeData(
@@ -111,6 +112,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isFetchingMore: false,
           ));
         }
+      } catch (e) {
+        emit(currentState.copyWith(isFetchingMore: false));
+      }
+    }
+  }
+
+  Future<void> _onChangePage(
+    ChangePageEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is HomeLoaded && !currentState.isFetchingMore) {
+      emit(currentState.copyWith(isFetchingMore: true));
+      try {
+        final session = await _authStorage.getSession();
+        final newHotels = await getRecommendations.execute(
+          topK: 12,
+          pageIndex: event.pageIndex,
+          province: currentState.selectedProvince?.name,
+          accessToken: session?.accessToken,
+        );
+
+        emit(currentState.copyWith(
+          hotels: newHotels,
+          pageIndex: event.pageIndex,
+          hasReachedMax: newHotels.length < 12,
+          isFetchingMore: false,
+        ));
       } catch (e) {
         emit(currentState.copyWith(isFetchingMore: false));
       }

@@ -12,10 +12,10 @@ import '../../../hotel/presentation/screens/hotel_detail_screen.dart';
 import '../../../../core/constants/app_colors.dart';
 
 // --- CONSTANTS ĐỒNG BỘ VỚI HOME ---
-const _kGreen = AppColors.greenPrimary;
-const _kSurface = Color(0xFFF9F5F0);
-const _kTextPrimary = Color(0xFF3E2723);
-const _kTextSec = Color(0xFF6D4C41);
+const _kGreen = AppColors.primary;
+const _kSurface = AppColors.scaffoldBg;
+const _kTextPrimary = AppColors.textPrimary;
+const _kTextSec = AppColors.textSecondary;
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -38,12 +38,12 @@ class _FavoritesScreenView extends StatelessWidget {
       backgroundColor: _kSurface,
       appBar: AppBar(
         elevation: 2,
-        shadowColor: AppColors.greenPrimary.withOpacity(0.2),
+        shadowColor: AppColors.primary.withOpacity(0.2),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppColors.greenPrimary, AppColors.greenMedium],
+              colors: [AppColors.primary, AppColors.primaryMedium],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -231,7 +231,7 @@ class _FavoriteHotelCard extends StatelessWidget {
         border: Border.all(color: AppColors.divider.withOpacity(0.6)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.brownDark.withOpacity(0.04),
+            color: AppColors.textDark.withOpacity(0.04),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
