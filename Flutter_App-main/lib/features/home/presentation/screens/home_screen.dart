@@ -18,6 +18,8 @@ import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../hotel/domain/entities/hotel_entity.dart';
 import '../../../hotel/domain/repositories/hotel_repository.dart';
 import '../../../hotel/presentation/screens/hotel_detail_screen.dart';
+import '../../../hotel/presentation/screens/create_hotel_screen.dart';
+import '../../../hotel/presentation/screens/my_hotels_screen.dart';
 
 const _kGreen = AppColors.greenPrimary;
 const _kGreenMedium = AppColors.greenMedium;
@@ -82,6 +84,10 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   bool _isHistoryLoading = false;
   bool _isHistoryLoaded = false;
   String? _threadId;
+  
+  bool _showThreadsList = false;
+  List<Map<String, dynamic>> _threads = [];
+  bool _isThreadsLoading = false;
 
   bool _isOwner = false;
   Future<_OwnerStats>? _ownerStatsFuture;
@@ -218,12 +224,175 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
     } catch (_) {
       // Ignore history loading errors and let the user start a new chat.
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _isHistoryLoading = false;
-        _isHistoryLoaded = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isHistoryLoading = false;
+          _isHistoryLoaded = true;
+        });
+      }
     }
+  }
+
+  Future<void> _loadThreadsList() async {
+    final token = await _authStorage.getAccessToken();
+    if (token == null || token.isEmpty) return;
+
+    setState(() {
+      _isThreadsLoading = true;
+    });
+
+    try {
+      final response = await _aiClient.get(
+        '/threads',
+        accessToken: token,
+      );
+      final list = response['data'];
+      if (list is List) {
+        setState(() {
+          _threads = list.map((item) => Map<String, dynamic>.from(item)).toList();
+        });
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi tải danh sách lịch sử: $error')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isThreadsLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadThreadMessages(String threadId) async {
+    final token = await _authStorage.getAccessToken();
+    if (token == null || token.isEmpty) return;
+
+    setState(() {
+      _isHistoryLoading = true;
+      _threadId = threadId;
+      _messages.clear();
+    });
+
+    try {
+      final messagesResponse = await _aiClient.get(
+        '/threads/$threadId/messages',
+        accessToken: token,
+      );
+      final messagesData = messagesResponse['data'];
+      if (messagesData is List) {
+        setState(() {
+          _messages.addAll(
+            messagesData.map((item) {
+              final map = item as Map<String, dynamic>;
+              return _ChatMessage(
+                role: map['role']?.toString() ?? 'assistant',
+                content: map['content']?.toString() ?? '',
+              );
+            }),
+          );
+        });
+        await _persistThreadId(threadId);
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi tải tin nhắn: $error')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isHistoryLoading = false;
+          _showThreadsList = false;
+        });
+        _scrollChatToBottom();
+      }
+    }
+  }
+
+  Future<void> _deleteThread(String threadIdToDelete) async {
+    final token = await _authStorage.getAccessToken();
+    if (token == null || token.isEmpty) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Xóa cuộc hội thoại',
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: _kTextPrimary),
+        ),
+        content: Text(
+          'Bạn có chắc chắn muốn xóa lịch sử trò chuyện của cuộc hội thoại này?',
+          style: GoogleFonts.dmSans(color: _kTextSec),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Hủy',
+              style: GoogleFonts.dmSans(color: _kTextSec),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              'Xóa',
+              style: GoogleFonts.dmSans(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await _aiClient.delete(
+        '/threads/$threadIdToDelete',
+        accessToken: token,
+      );
+
+      if (_threadId == threadIdToDelete) {
+        final session = await _authStorage.getSession();
+        final userId = session?.userId ?? 0;
+        if (userId > 0) {
+          await _chatStorage.clearLastThreadId(userId);
+        }
+        setState(() {
+          _threadId = null;
+          _messages.clear();
+        });
+      }
+
+      setState(() {
+        _threads.removeWhere((t) => t['thread_id'] == threadIdToDelete);
+      });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đã xóa cuộc trò chuyện.')),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi khi xóa: $error')),
+      );
+    }
+  }
+
+  Future<void> _startNewChat() async {
+    final session = await _authStorage.getSession();
+    final userId = session?.userId ?? 0;
+    if (userId > 0) {
+      await _chatStorage.clearLastThreadId(userId);
+    }
+    setState(() {
+      _threadId = null;
+      _messages.clear();
+      _showThreadsList = false;
+    });
   }
 
   void _toggleChatOpen() {
@@ -274,11 +443,12 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
         context,
       ).showSnackBar(SnackBar(content: Text(error.toString())));
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _isSendingMessage = false;
-      });
-      _scrollChatToBottom();
+      if (mounted) {
+        setState(() {
+          _isSendingMessage = false;
+        });
+        _scrollChatToBottom();
+      }
     }
   }
 
@@ -381,22 +551,62 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.auto_awesome, color: Colors.white),
+                      if (!_showThreadsList)
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.history, color: Colors.white, size: 20),
+                          tooltip: 'Lịch sử chat',
+                          onPressed: () {
+                            setState(() {
+                              _showThreadsList = true;
+                            });
+                            _loadThreadsList();
+                          },
+                        )
+                      else
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                          onPressed: () {
+                            setState(() {
+                              _showThreadsList = false;
+                            });
+                          },
+                        ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Tro ly dat phong',
+                          _showThreadsList ? 'Lịch sử trò chuyện' : 'Trợ lý đặt phòng',
                           style: GoogleFonts.dmSans(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
+                            fontSize: 15,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(
+                          _showThreadsList ? Icons.add : Icons.add_comment_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        tooltip: 'Hội thoại mới',
+                        onPressed: _startNewChat,
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                         onPressed: () {
                           setState(() => _isChatOpen = false);
                         },
-                        icon: const Icon(Icons.close, color: Colors.white),
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
                       ),
                     ],
                   ),
@@ -407,77 +617,165 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                       horizontal: 12,
                       vertical: 8,
                     ),
-                    child: _isHistoryLoading && _messages.isEmpty
-                        ? Center(
-                            child: Text(
-                              'Dang tai lich su...',
-                              style: GoogleFonts.dmSans(
-                                color: _kTextSec,
-                                fontStyle: FontStyle.italic,
-                                fontSize: 12,
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _chatScroll,
-                            itemCount:
-                                _messages.length + (_isSendingMessage ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index >= _messages.length) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 6),
+                    child: _showThreadsList
+                        ? (_isThreadsLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(color: _kGreen),
+                              )
+                            : _threads.isEmpty
+                                ? Center(
                                     child: Text(
-                                      'Dang tra loi...',
+                                      'Không có lịch sử trò chuyện',
                                       style: GoogleFonts.dmSans(
                                         color: _kTextSec,
                                         fontStyle: FontStyle.italic,
-                                        fontSize: 12,
+                                        fontSize: 13,
                                       ),
                                     ),
+                                  )
+                                : ListView.builder(
+                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    itemCount: _threads.length,
+                                    itemBuilder: (context, index) {
+                                      final thread = _threads[index];
+                                      final threadId = thread['thread_id']?.toString() ?? '';
+                                      final title = thread['title']?.toString() ?? 'Hội thoại mới';
+                                      final createdAtStr = thread['created_at']?.toString() ?? '';
+                                      
+                                      String subtitle = '';
+                                      if (createdAtStr.isNotEmpty) {
+                                        try {
+                                          final dt = DateTime.parse(createdAtStr).toLocal();
+                                          subtitle = '${dt.day}/${dt.month}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+                                        } catch (_) {
+                                          subtitle = createdAtStr;
+                                        }
+                                      }
+
+                                      final isActive = _threadId == threadId;
+
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: isActive ? _kGreen.withOpacity(0.05) : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isActive ? _kGreen.withOpacity(0.2) : Colors.grey.shade200,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          dense: true,
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                                          leading: CircleAvatar(
+                                            backgroundColor: isActive ? _kGreen : const Color(0xFFF4F6F5),
+                                            radius: 14,
+                                            child: Icon(
+                                              Icons.chat_bubble_outline,
+                                              color: isActive ? Colors.white : _kTextSec,
+                                              size: 14,
+                                            ),
+                                          ),
+                                          title: Text(
+                                            title,
+                                            style: GoogleFonts.dmSans(
+                                              color: _kTextPrimary,
+                                              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                                              fontSize: 13,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          subtitle: subtitle.isNotEmpty
+                                              ? Text(
+                                                  subtitle,
+                                                  style: GoogleFonts.dmSans(
+                                                    color: _kTextSec,
+                                                    fontSize: 10,
+                                                  ),
+                                                )
+                                              : null,
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                                            onPressed: () => _deleteThread(threadId),
+                                          ),
+                                          onTap: () => _loadThreadMessages(threadId),
+                                        ),
+                                      );
+                                    },
+                                  ))
+                        : (_isHistoryLoading && _messages.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'Dang tai lich su...',
+                                  style: GoogleFonts.dmSans(
+                                    color: _kTextSec,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12,
                                   ),
-                                );
-                              }
-                              return _buildChatBubble(_messages[index]);
-                            },
-                          ),
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _chatScroll,
+                                itemCount:
+                                    _messages.length + (_isSendingMessage ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index >= _messages.length) {
+                                    return Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 6),
+                                        child: Text(
+                                          'Dang tra loi...',
+                                          style: GoogleFonts.dmSans(
+                                            color: _kTextSec,
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return _buildChatBubble(_messages[index]);
+                                },
+                              )),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _chatInput,
-                          minLines: 1,
-                          maxLines: 3,
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) => _sendChatMessage(),
-                          decoration: InputDecoration(
-                            hintText: 'Nhap tin nhan...',
-                            hintStyle: GoogleFonts.dmSans(
-                              color: _kTextSec,
-                              fontSize: 13,
-                            ),
-                            filled: true,
-                            fillColor: const Color(0xFFF4F6F5),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
+                if (!_showThreadsList)
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _chatInput,
+                            minLines: 1,
+                            maxLines: 3,
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (_) => _sendChatMessage(),
+                            decoration: InputDecoration(
+                              hintText: 'Nhap tin nhan...',
+                              hintStyle: GoogleFonts.dmSans(
+                                color: _kTextSec,
+                                fontSize: 13,
+                              ),
+                              filled: true,
+                              fillColor: const Color(0xFFF4F6F5),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: _isSendingMessage ? null : _sendChatMessage,
-                        icon: const Icon(Icons.send, color: _kGreen),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: _isSendingMessage ? null : _sendChatMessage,
+                          icon: const Icon(Icons.send, color: _kGreen),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -1008,6 +1306,74 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                       ),
                     ),
                   ],
+                ),
+                const Divider(color: Color(0xFFE8E0D5), height: 24, thickness: 1),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CreateHotelScreen(),
+                      ),
+                    );
+                    if (result == true) {
+                      if (context.mounted) {
+                        context.read<HomeBloc>().add(LoadHomeDataEvent());
+                        _loadOwnerContext();
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.add_business_rounded, color: Colors.white, size: 20),
+                  label: Text(
+                    'Tạo khách sạn mới',
+                    style: GoogleFonts.dmSans(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _kGreen,
+                    minimumSize: const Size(double.infinity, 44),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 2,
+                    shadowColor: _kGreen.withOpacity(0.3),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MyHotelsScreen(),
+                      ),
+                    );
+                    if (result == true || result == null) {
+                      if (context.mounted) {
+                        context.read<HomeBloc>().add(LoadHomeDataEvent());
+                        _loadOwnerContext();
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.apartment_rounded, color: _kGreen, size: 20),
+                  label: Text(
+                    'Khách sạn của tôi',
+                    style: GoogleFonts.dmSans(
+                      color: _kGreen,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 44),
+                    side: const BorderSide(color: _kGreen, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
                 ),
               ],
             ),

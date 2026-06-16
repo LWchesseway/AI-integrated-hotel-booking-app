@@ -42,6 +42,16 @@ class AiApiClient {
     return _handleResponse(response);
   }
 
+  Future<Map<String, dynamic>> delete(
+    String path, {
+    Map<String, dynamic>? query,
+    String? accessToken,
+  }) async {
+    final uri = _buildUri(path, query);
+    final response = await _client.delete(uri, headers: _headers(accessToken));
+    return _handleResponse(response);
+  }
+
   Uri _buildUri(String path, Map<String, dynamic>? query) {
     final raw = '${AiApiConfig.baseUrl}$path';
     final uri = Uri.parse(raw);

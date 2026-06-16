@@ -16,7 +16,7 @@ docker compose -f docker-compose.minio.yml up -d
 dotnet ef migrations add InitialCreate -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
 dotnet ef database update -p src\DoAn.HotelParking.Infrastructure -s src\DoAn.HotelParking.Presentation.Api
 dotnet run --project src\DoAn.HotelParking.Presentation.Api
-
+uvicorn chat_backend:app --reload --host 0.0.0.0 --port 8000
 
 Kiểm tra MinIO:
 - API MinIO: http://localhost:9001
