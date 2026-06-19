@@ -7,16 +7,8 @@ from pydantic import Field
 from dotenv import load_dotenv
 
 from langchain_groq import ChatGroq
-
-from langchain.agents import (
-    create_agent,
-    AgentState
-)
-
-from langchain.agents.middleware import (
-    wrap_tool_call
-)
-
+from langchain.agents import create_agent, AgentState
+from langchain.agents.middleware import wrap_tool_call
 from langchain.messages import (
     AIMessage,
     HumanMessage,
@@ -24,11 +16,15 @@ from langchain.messages import (
     SystemMessage,
     RemoveMessage
 )
-
 from langgraph.checkpoint.sqlite import SqliteSaver
+from testapi import (
+    search_hotels,
+    search_hotelsbyname,
+    search_hotelsbyprovince,
+    search_roomtypebyHotelID
+)
 
 load_dotenv()
-
 
 logging.basicConfig(
     filename="tools_call.log",
@@ -36,60 +32,36 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname)s | %(message)s",
     encoding="utf-8"
 )
-class CustomState(AgentState):
 
+
+class CustomState(AgentState):
     # Summary hội thoại
     summary: str = ""
 
     # User preferences
-    user_preferences: Dict[str, Any] = Field(
-        default_factory=dict
-    )
+    user_preferences: Dict[str, Any] = Field(default_factory=dict)
 
     # Business state
-    travel_context: Dict[str, Any] = Field(
-        default_factory=dict
-    )
+    travel_context: Dict[str, Any] = Field(default_factory=dict)
+
 
 def init_db():
-
-    conn = sqlite3.connect(
-        "memory.db",
-        check_same_thread=False
-    )
-
-    conn.execute(
-        "PRAGMA journal_mode=WAL;"
-    )
-
+    conn = sqlite3.connect("memory.db", check_same_thread=False)
+    conn.execute("PRAGMA journal_mode=WAL;")
     conn.commit()
-
     return conn
 
-conn = init_db()
 
+conn = init_db()
 checkpointer = SqliteSaver(conn)
 
 
 def load_system_prompt():
-
-    with open(
-        "Promt.txt",
-        "r",
-        encoding="utf-8"
-    ) as f:
-
+    with open("Promt.txt", "r", encoding="utf-8") as f:
         return f.read()
 
+
 SYSTEM_PROMPT = load_system_prompt()
-
-
-from testapi import (
-    search_hotels,
-    search_hotelsbyname,
-    search_hotelsbyprovince,
-    search_roomtypebyHotelID
-)
 
 TOOLS = [
     search_hotels,
@@ -98,58 +70,36 @@ TOOLS = [
     search_roomtypebyHotelID
 ]
 
-ALLOWED_TOOLS: Set[str] = {
-    t.name for t in TOOLS
-}
+ALLOWED_TOOLS: Set[str] = {t.name for t in TOOLS}
 
 
 @wrap_tool_call
 def tool_guard(request, handler):
-
     tool_name = request.tool_call["name"]
 
-
-
     if tool_name not in ALLOWED_TOOLS:
-
         return ToolMessage(
             content=f"Tool '{tool_name}' không hợp lệ.",
             tool_call_id=request.tool_call["id"]
         )
 
-
     try:
-
         logging.info(
             json.dumps(
                 {
                     "tool_name": tool_name,
-                    "args": request.tool_call.get(
-                        "args",
-                        {}
-                    )
+                    "args": request.tool_call.get("args", {})
                 },
                 ensure_ascii=False
             )
         )
-
     except Exception as e:
-
-        logging.error(
-            f"LOG ERROR: {str(e)}"
-        )
-
+        logging.error(f"LOG ERROR: {str(e)}")
 
     try:
-
         return handler(request)
-
     except Exception as e:
-
-        logging.error(
-            f"TOOL ERROR | {tool_name} | {str(e)}"
-        )
-
+        logging.error(f"TOOL ERROR | {tool_name} | {str(e)}")
         return ToolMessage(
             content=f"Tool error: {str(e)}",
             tool_call_id=request.tool_call["id"]
@@ -161,73 +111,34 @@ llm = ChatGroq(
     temperature=0
 )
 
-
 agent = create_agent(
     model=llm,
     tools=TOOLS,
     system_prompt=SYSTEM_PROMPT,
-    middleware=[
-        tool_guard
-    ],
+    middleware=[tool_guard],
     checkpointer=checkpointer,
     state_schema=CustomState
 )
 
 
-def format_messages(
-    messages,
-    limit=12
-):
-
+def format_messages(messages, limit=12):
     recent = messages[-limit:]
-
     lines = []
-
     for m in recent:
-
         role = m.__class__.__name__
-
-        content = getattr(
-            m,
-            "content",
-            ""
-        )
-
+        content = getattr(m, "content", "")
         if isinstance(content, list):
             content = str(content)
-
-        lines.append(
-            f"{role}: {content}"
-        )
-
+        lines.append(f"{role}: {content}")
     return "\n".join(lines)
 
 
-def update_travel_context(
-    thread_id: str
-):
-    snapshot = agent.get_state({
-        "configurable": {
-            "thread_id": thread_id
-        }
-    })
-
+def update_travel_context(thread_id: str):
+    snapshot = agent.get_state({"configurable": {"thread_id": thread_id}})
     state = snapshot.values
-
-    current_context = state.get(
-        "travel_context",
-        {}
-    )
-
-    messages = state.get(
-        "messages",
-        []
-    )
-
-    conversation = format_messages(
-        messages,
-        limit=8
-    )
+    current_context = state.get("travel_context", {})
+    messages = state.get("messages", [])
+    conversation = format_messages(messages, limit=8)
 
     prompt = f"""
     Bạn là AI chuyên extract thông tin booking khách sạn.
@@ -264,30 +175,16 @@ def update_travel_context(
     """
 
     try:
-
-        response = llm.invoke(
-            prompt
-        ).content
-
-        # =================================================
-        # CLEAN JSON
-        # =================================================
-
+        response = llm.invoke(prompt).content
         response = (
             response
             .replace("```json", "")
             .replace("```", "")
             .strip()
         )
+        extracted = json.loads(response)
 
-        extracted = json.loads(
-            response
-        )
-
-        # =================================================
         # MERGE CONTEXT
-        # =================================================
-
         merged = {
             **current_context,
             **{
@@ -297,70 +194,25 @@ def update_travel_context(
             }
         }
 
-        # =================================================
         # UPDATE STATE
-        # =================================================
-
         agent.update_state(
-            {
-                "configurable": {
-                    "thread_id": thread_id
-                }
-            },
-            {
-                "travel_context": merged
-            }
+            {"configurable": {"thread_id": thread_id}},
+            {"travel_context": merged}
         )
 
-        print(
-            "\n========== TRAVEL CONTEXT UPDATED =========="
-        )
-
-        print(
-            json.dumps(
-                merged,
-                indent=2,
-                ensure_ascii=False
-            )
-        )
-
-        print(
-            "============================================\n"
-        )
+        print("\n========== TRAVEL CONTEXT UPDATED ==========")
+        print(json.dumps(merged, indent=2, ensure_ascii=False))
+        print("============================================\n")
 
     except Exception as e:
-
-        print(
-            "Travel context error:",
-            e
-        )
+        print("Travel context error:", e)
 
 
-def summarize_conversation(
-    thread_id: str,
-    messages
-):
-
-    # =====================================================
-    # LOAD CURRENT STATE
-    # =====================================================
-
-    snapshot = agent.get_state({
-        "configurable": {
-            "thread_id": thread_id
-        }
-    })
-
+def summarize_conversation(thread_id: str, messages):
+    snapshot = agent.get_state({"configurable": {"thread_id": thread_id}})
     state = snapshot.values
-
-    old_summary = state.get(
-        "summary",
-        ""
-    )
-
-    context_text = format_messages(
-        messages
-    )
+    old_summary = state.get("summary", "")
+    context_text = format_messages(messages)
 
     prompt = f"""
     Bạn là AI chuyên tóm tắt hội thoại.
@@ -383,95 +235,45 @@ def summarize_conversation(
     """
 
     try:
+        summary = llm.invoke(prompt).content
 
-        summary = llm.invoke(
-            prompt
-        ).content
-
-        # =================================================
         # FILTER SAFE MESSAGES
-        # =================================================
-
         filtered_messages = []
-
         for m in messages:
-
             # skip tool message
-            if isinstance(
-                m,
-                ToolMessage
-            ):
+            if isinstance(m, ToolMessage):
                 continue
-
             # skip ai tool call
-            if (
-                isinstance(m, AIMessage)
-                and getattr(
-                    m,
-                    "tool_calls",
-                    None
-                )
-            ):
+            if isinstance(m, AIMessage) and getattr(m, "tool_calls", None):
                 continue
-
             filtered_messages.append(m)
 
-        # =================================================
         # KEEP RECENT 3 MESSAGES
-        # =================================================
-
         delete_messages = [
             RemoveMessage(id=m.id)
             for m in filtered_messages[:-3]
         ]
 
-        # =================================================
         # UPDATE STATE
-        # =================================================
-
         agent.update_state(
-            {
-                "configurable": {
-                    "thread_id": thread_id
-                }
-            },
+            {"configurable": {"thread_id": thread_id}},
             {
                 "summary": summary,
                 "messages": delete_messages
             }
         )
 
-        print(
-            "\n========== SUMMARY UPDATED =========="
-        )
-
+        print("\n========== SUMMARY UPDATED ==========")
         print(summary)
-
-        print(
-            "=====================================\n"
-        )
+        print("=====================================\n")
 
     except Exception as e:
-
-        print(
-            "Summarize error:",
-            e
-        )
+        print("Summarize error:", e)
 
 
-def build_business_rules(
-    travel_context: dict
-):
-
+def build_business_rules(travel_context: dict):
     rules = []
-
-    # =====================================================
-    # EXAMPLE WORKFLOW LOGIC
-    # =====================================================
-    if travel_context.get(
-        "destination"
-    ):
-
+    if travel_context.get("destination"):
         rules.append(
             """
             User đã có điểm đến mong muốn.
@@ -479,10 +281,7 @@ def build_business_rules(
             """
         )
 
-    if travel_context.get(
-        "selected_hotel"
-    ):
-
+    if travel_context.get("selected_hotel"):
         rules.append(
             """
             User đã chọn khách sạn.
@@ -490,13 +289,7 @@ def build_business_rules(
             """
         )
 
-    if (
-        travel_context.get("budget")
-        and not travel_context.get(
-            "hotel_name"
-        )
-    ):
-
+    if travel_context.get("budget") and not travel_context.get("hotel_name"):
         rules.append(
             """
             User đã có ngân sách.
@@ -504,15 +297,7 @@ def build_business_rules(
             """
         )
 
-    if (
-        travel_context.get(
-            "hotel_name"
-        )
-        and not travel_context.get(
-            "room_type"
-        )
-    ):
-
+    if travel_context.get("hotel_name") and not travel_context.get("room_type"):
         rules.append(
             """
             User đã chọn khách sạn.
@@ -520,15 +305,7 @@ def build_business_rules(
             """
         )
 
-    if (
-        travel_context.get(
-            "room_type"
-        )
-        and not travel_context.get(
-            "checkin_date"
-        )
-    ):
-
+    if travel_context.get("room_type") and not travel_context.get("checkin_date"):
         rules.append(
             """
             Hãy hỏi ngày checkin/check-out.
@@ -538,40 +315,16 @@ def build_business_rules(
     return "\n".join(rules)
 
 
-def chat(
-    thread_id: str,
-    message: str
-):
-
-
-    snapshot = agent.get_state({
-        "configurable": {
-            "thread_id": thread_id
-        }
-    })
-
+def chat(thread_id: str, message: str):
+    snapshot = agent.get_state({"configurable": {"thread_id": thread_id}})
     state = snapshot.values
+    summary = state.get("summary", "")
+    travel_context = state.get("travel_context", {})
 
-    summary = state.get(
-        "summary",
-        ""
-    )
-
-    travel_context = state.get(
-        "travel_context",
-        {}
-    )
-
-
-    business_rules = build_business_rules(
-        travel_context
-    )
-
+    business_rules = build_business_rules(travel_context)
 
     input_messages = []
-
     if summary:
-
         input_messages.append(
             SystemMessage(
                 content=f"""
@@ -585,130 +338,46 @@ def chat(
             )
         )
 
-    input_messages.append(
-        HumanMessage(content=message)
-    )
-
+    input_messages.append(HumanMessage(content=message))
 
     result = agent.invoke(
-        {
-            "messages": input_messages
-        },
-        config={
-            "configurable": {
-                "thread_id": thread_id
-            }
-        }
+        {"messages": input_messages},
+        config={"configurable": {"thread_id": thread_id}}
     )
 
-    ai_reply = result[
-        "messages"
-    ][-1].content
+    ai_reply = result["messages"][-1].content
 
+    update_travel_context(thread_id)
 
-    update_travel_context(
-        thread_id
-    )
-
-
-    latest_snapshot = agent.get_state({
-        "configurable": {
-            "thread_id": thread_id
-        }
-    })
-
+    latest_snapshot = agent.get_state({"configurable": {"thread_id": thread_id}})
     latest_state = latest_snapshot.values
+    messages = latest_state.get("messages", [])
 
-    messages = latest_state.get(
-        "messages",
-        []
-    )
+    human_messages = [m for m in messages if isinstance(m, HumanMessage)]
+    count_human = len(human_messages)
 
+    print(f"\nCURRENT MESSAGES: {len(messages)}")
 
-    human_messages = [
-        m for m in messages
-        if isinstance(
-            m,
-            HumanMessage
-        )
-    ]
+    if count_human > 0 and count_human % 5 == 0:
+        summarize_conversation(thread_id, messages)
 
-    count_human = len(
-        human_messages
-    )
-
-    print(
-        f"\nCURRENT MESSAGES: {len(messages)}"
-    )
-
-
-    if (
-        count_human > 0
-        and count_human % 5 == 0
-    ):
-
-        summarize_conversation(
-            thread_id,
-            messages
-        )
-
-
-    final_snapshot = agent.get_state({
-        "configurable": {
-            "thread_id": thread_id
-        }
-    })
-
+    final_snapshot = agent.get_state({"configurable": {"thread_id": thread_id}})
     final_state = final_snapshot.values
 
-    print(
-        "\n========== FINAL TRAVEL CONTEXT =========="
-    )
-
-    print(
-        json.dumps(
-            final_state.get(
-                "travel_context",
-                {}
-            ),
-            indent=2,
-            ensure_ascii=False
-        )
-    )
-
-    print(
-        "==========================================\n"
-    )
+    print("\n========== FINAL TRAVEL CONTEXT ==========")
+    print(json.dumps(final_state.get("travel_context", {}), indent=2, ensure_ascii=False))
+    print("==========================================\n")
 
     return ai_reply
 
 
 if __name__ == "__main__":
-
-    print(
-        "=== Local Chat Test ==="
-    )
-
-    thread_id = input(
-        "thread ID: "
-    ).strip()
+    print("=== Local Chat Test ===")
+    thread_id = input("thread ID: ").strip()
 
     while True:
-
         msg = input("User: ")
-
-        if msg.lower() in [
-            "exit",
-            "quit"
-        ]:
+        if msg.lower() in ["exit", "quit"]:
             break
-
-        ai_reply = chat(
-            thread_id,
-            msg
-        )
-
-        print(
-            "AI:",
-            ai_reply
-        )
+        ai_reply = chat(thread_id, msg)
+        print("AI:", ai_reply)
